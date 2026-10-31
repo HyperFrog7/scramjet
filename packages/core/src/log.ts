@@ -81,7 +81,7 @@ export default {
   	font-size: 0.9em;
   `,
 			`${severity === "debug" ? "color: gray" : ""}`,
-			...args
+			...args,
 		);
 	},
 	log: function (message: string, ...args: any[]) {
@@ -111,7 +111,7 @@ export default {
 		this.print(
 			"debug",
 			"[time]",
-			`${type} was ${timespan} (${duration.toFixed(2)}ms)`
+			`${type} was ${timespan} (${duration.toFixed(2)}ms)`,
 		);
 	},
 };

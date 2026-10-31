@@ -144,7 +144,7 @@ export default [
 		contentType: "text/html",
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><meta charset="utf-8"><script src="/common.js"></script></head><body><span id="test">café</span><script src="/script.js"></script></body></html>',
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -160,7 +160,7 @@ export default [
 		contentType: "text/html",
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><script src="/common.js"></script></head><body><span id="test">café</span><script src="/script.js"></script></body></html>',
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -191,7 +191,7 @@ export default [
 		// 0xe9 = é in windows-1252 / ISO-8859-1
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><script src="/common.js"></script></head><body><span id="test">caf\xe9</span><script src="/script.js"></script></body></html>',
-			"latin1"
+			"latin1",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -220,7 +220,7 @@ export default [
 		contentType: "text/html",
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><META CHARSET="UTF-8"><script src="/common.js"></script></head><body><span id="test">tëst</span><script src="/script.js"></script></body></html>',
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -237,7 +237,7 @@ export default [
 		contentType: "text/html",
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><meta charset="utf-16"><script src="/common.js"></script></head><body><span id="test">hello</span><script src="/script.js"></script></body></html>',
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -270,7 +270,7 @@ export default [
 		// 0x93 = \u201c (left double quote), 0x94 = \u201d (right double quote) in windows-1252
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><script src="/common.js"></script></head><body><span id="test">\x93hi\x94</span><script src="/script.js"></script></body></html>',
-			"latin1"
+			"latin1",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -300,7 +300,7 @@ export default [
 		contentType: "text/html",
 		html: Buffer.from(
 			`<!DOCTYPE html><html><head><!-- ${"x".repeat(1100)} --><meta charset="windows-1251"><script src="/common.js"></script></head><body><span id="test">ok</span><script src="/script.js"></script></body></html>`,
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -343,7 +343,7 @@ export default [
 		// 0x91 = ', 0x92 = ', 0x96 = –
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><script src="/common.js"></script></head><body><span id="test">\x91hello\x92 \x96 world</span><script src="/script.js"></script></body></html>',
-			"latin1"
+			"latin1",
 		),
 		assertion: `
 			const el = document.getElementById("test");
@@ -361,7 +361,7 @@ export default [
 		// The content is valid UTF-8, so if header wins, it decodes correctly
 		html: Buffer.from(
 			'<!DOCTYPE html><html><head><meta charset="windows-1251"><script src="/common.js"></script></head><body><span id="test">héllo</span><script src="/script.js"></script></body></html>',
-			"utf-8"
+			"utf-8",
 		),
 		assertion: `
 			const el = document.getElementById("test");

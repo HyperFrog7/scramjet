@@ -48,7 +48,7 @@ export default [
 			const { instance, module } = await WebAssembly.instantiateStreaming(fetch("/mod.wasm"));
 			assertEqual(instance.exports.f42(), 42, "instantiateStreaming compiled and ran the module");
 			assert(module instanceof WebAssembly.Module, "a Module came back");
-		`
+		`,
 	),
 	wasmTest(
 		"wasm-compile-streaming",
@@ -58,7 +58,7 @@ export default [
 			assertEqual(instance.exports.f42(), 42, "compileStreaming then instantiate");
 			assertDeepEqual(WebAssembly.Module.exports(mod).map((e) => e.name), ["f42"], "Module.exports");
 			assertDeepEqual(WebAssembly.Module.imports(mod), [], "Module.imports");
-		`
+		`,
 	),
 	wasmTest(
 		"wasm-bytes-untouched",
@@ -70,7 +70,7 @@ export default [
 			const { instance } = await WebAssembly.instantiate(buf);
 			assertEqual(instance.exports.f42(), 42, "instantiate from an ArrayBuffer");
 			assert(await WebAssembly.validate(buf), "WebAssembly.validate");
-		`
+		`,
 	),
 	wasmTest(
 		"wasm-content-type-preserved",
@@ -79,7 +79,7 @@ export default [
 			assertEqual(r.headers.get("content-type"), "application/wasm",
 				"the wasm content-type survives the proxy - streaming compilation depends on it");
 			assertEqual((await r.arrayBuffer()).byteLength, 36, "byte length");
-		`
+		`,
 	),
 	wasmTest(
 		"wasm-wrong-mime-rejects",
@@ -90,6 +90,6 @@ export default [
 			assert(err, "a non-wasm MIME type must reject");
 			assert(String(err.message).toLowerCase().includes("mime") || err instanceof TypeError,
 				"rejection reason: " + err.message);
-		`
+		`,
 	),
 ];

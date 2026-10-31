@@ -19,7 +19,7 @@ const RUNWAY_BINDINGS = [
 
 export async function setupRunwayPageBindings(
 	page: Page,
-	onBindingCalled: (event: RunwayBindingCalledEvent) => void
+	onBindingCalled: (event: RunwayBindingCalledEvent) => void,
 ): Promise<RunwayPageBindingsHandle> {
 	const context = page.context();
 

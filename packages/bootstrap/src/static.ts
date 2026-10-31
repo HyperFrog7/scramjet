@@ -93,11 +93,11 @@ async function saveFile(entry: FileEntry): Promise<void> {
 
 async function findLatestVersion(
 	packageName: string,
-	majorVersion: string
+	majorVersion: string,
 ): Promise<string> {
 	// Use jsdelivr API to find latest version
 	const response = await fetch(
-		`https://data.jsdelivr.com/v1/packages/npm/${packageName}?a`
+		`https://data.jsdelivr.com/v1/packages/npm/${packageName}?a`,
 	);
 	if (!response.ok) {
 		throw new Error(`Failed to fetch package info: ${response.statusText}`);
@@ -105,12 +105,12 @@ async function findLatestVersion(
 
 	const data = await response.json();
 	const versions = data.versions.filter((v: any) =>
-		v.version.startsWith(`${majorVersion}.`)
+		v.version.startsWith(`${majorVersion}.`),
 	);
 
 	if (versions.length === 0) {
 		throw new Error(
-			`No versions found for ${packageName} with major version ${majorVersion}`
+			`No versions found for ${packageName} with major version ${majorVersion}`,
 		);
 	}
 
@@ -121,7 +121,7 @@ async function findLatestVersion(
 async function downloadFile(
 	packageName: string,
 	version: string,
-	filePath: string
+	filePath: string,
 ): Promise<ArrayBuffer> {
 	const url = `${CDN_URL}${packageName}@${version}${filePath}`;
 	const response = await fetch(url);
@@ -138,7 +138,7 @@ async function ensureFile(
 	version: string,
 	filePath: string,
 	contentType: string,
-	routePath: string
+	routePath: string,
 ): Promise<void> {
 	const cached = await getFile(routePath);
 
@@ -211,7 +211,7 @@ if (isSw) {
 
 				// Fall through to network
 				return fetch(event.request);
-			})()
+			})(),
 		);
 	});
 
@@ -224,7 +224,7 @@ if (isSw) {
 			const controllerVersion = await findLatestVersion(
 				SCRAMJET_CONTROLLER_PACKAGE_NAME,
 				config.scramjetControllerVersionPin ||
-					SCRAMJET_CONTROLLER_PINNED_MAJOR_VERSION
+					SCRAMJET_CONTROLLER_PINNED_MAJOR_VERSION,
 			);
 
 			console.log(controllerVersion);
@@ -244,7 +244,7 @@ if (isSw) {
 				scramjetVersion,
 				"/dist/scramjet.js",
 				"application/javascript",
-				config.scramjetBundlePath
+				config.scramjetBundlePath,
 			);
 
 			await ensureFile(
@@ -252,7 +252,7 @@ if (isSw) {
 				scramjetVersion,
 				"/dist/scramjet.wasm",
 				"application/wasm",
-				config.scramjetWasmPath
+				config.scramjetWasmPath,
 			);
 
 			// Download controller files
@@ -261,7 +261,7 @@ if (isSw) {
 				controllerVersion,
 				"/dist/controller.api.js",
 				"application/javascript",
-				config.scramjetControllerApiPath
+				config.scramjetControllerApiPath,
 			);
 
 			await ensureFile(
@@ -269,7 +269,7 @@ if (isSw) {
 				controllerVersion,
 				"/dist/controller.inject.js",
 				"application/javascript",
-				config.scramjetControllerInjectPath
+				config.scramjetControllerInjectPath,
 			);
 
 			await ensureFile(
@@ -277,7 +277,7 @@ if (isSw) {
 				controllerVersion,
 				"/dist/controller.sw.js",
 				"application/javascript",
-				config.scramjetControllerSwPath
+				config.scramjetControllerSwPath,
 			);
 
 			// Download transport files
@@ -285,7 +285,7 @@ if (isSw) {
 				const libcurlVersion = await findLatestVersion(
 					LIBCURL_TRANSPORT_PACKAGE_NAME,
 					config.libcurlTransportVersionPin ||
-						LIBCURL_TRANSPORT_PINNED_MAJOR_VERSION
+						LIBCURL_TRANSPORT_PINNED_MAJOR_VERSION,
 				);
 
 				await ensureFile(
@@ -293,13 +293,13 @@ if (isSw) {
 					libcurlVersion,
 					"/dist/index.js",
 					"application/javascript",
-					config.libcurlClientPath
+					config.libcurlClientPath,
 				);
 			} else if (config.transport === "epoxy") {
 				const epoxyVersion = await findLatestVersion(
 					EPOXY_TRANSPORT_PACKAGE_NAME,
 					config.epoxyTransportVersionPin ||
-						EPOXY_TRANSPORT_PINNED_MAJOR_VERSION
+						EPOXY_TRANSPORT_PINNED_MAJOR_VERSION,
 				);
 
 				await ensureFile(
@@ -307,7 +307,7 @@ if (isSw) {
 					epoxyVersion,
 					"/dist/index.js",
 					"application/javascript",
-					config.epoxyClientPath
+					config.epoxyClientPath,
 				);
 			}
 
@@ -359,7 +359,7 @@ if (isSw) {
 			}
 			if (!filePath) {
 				throw new Error(
-					"Could not determine bootstrap file path and none was provided!"
+					"Could not determine bootstrap file path and none was provided!",
 				);
 			}
 		}

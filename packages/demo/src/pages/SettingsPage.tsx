@@ -176,10 +176,10 @@ const SettingsView: Component<
 			</div>
 
 			{use(this.error).map((error) =>
-				error ? <div class="message error">{error}</div> : null
+				error ? <div class="message error">{error}</div> : null,
 			)}
 			{use(this.status).map((status) =>
-				status ? <div class="message status">{status}</div> : null
+				status ? <div class="message status">{status}</div> : null,
 			)}
 		</div>
 	);

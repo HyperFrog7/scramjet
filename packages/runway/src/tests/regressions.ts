@@ -100,11 +100,11 @@ export default [
 					res.writeHead(200, { "Content-Type": "application/javascript" });
 					if (url.searchParams.get("real") !== "1") {
 						res.end(
-							`window.fail("original module script query was not preserved")`
+							`window.fail("original module script query was not preserved")`,
 						);
 					} else if (url.searchParams.has("type")) {
 						res.end(
-							`window.fail("scramjet module marker leaked upstream", { search: ${JSON.stringify(url.search)} })`
+							`window.fail("scramjet module marker leaked upstream", { search: ${JSON.stringify(url.search)} })`,
 						);
 					} else {
 						res.end(`
@@ -125,11 +125,11 @@ export default [
 					res.writeHead(200, { "Content-Type": "application/javascript" });
 					if (url.searchParams.get("real") !== "1") {
 						res.end(
-							`window.fail("original module dependency query was not preserved")`
+							`window.fail("original module dependency query was not preserved")`,
 						);
 					} else if (url.searchParams.has("type")) {
 						res.end(
-							`window.fail("scramjet module marker leaked upstream from dependency", { search: ${JSON.stringify(url.search)} })`
+							`window.fail("scramjet module marker leaked upstream from dependency", { search: ${JSON.stringify(url.search)} })`,
 						);
 					} else {
 						res.end(`export default 1;`);
@@ -251,7 +251,7 @@ export default [
 				if (req.url === "/sub/page.html") {
 					res.writeHead(200, { "Content-Type": "text/html" });
 					res.end(
-						"<!doctype html><html><head></head><body><p>iframe page</p></body></html>"
+						"<!doctype html><html><head></head><body><p>iframe page</p></body></html>",
 					);
 					return;
 				}

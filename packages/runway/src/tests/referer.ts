@@ -46,7 +46,7 @@ function requestRefererTest(props: {
 			const finish = async (
 				status: "pass" | "fail",
 				message?: string,
-				details?: any
+				details?: any,
 			) => {
 				if (settled) return;
 				settled = true;
@@ -59,7 +59,7 @@ function requestRefererTest(props: {
 
 			const handleTargetRequest = (
 				req: http.IncomingMessage,
-				res: http.ServerResponse
+				res: http.ServerResponse,
 			) => {
 				if (req.url !== "/inspect") {
 					res.writeHead(404, { "Access-Control-Allow-Origin": "*" });
@@ -112,8 +112,8 @@ function requestRefererTest(props: {
 								runTest(async () => {
 									await fetch(${JSON.stringify(inspectUrl)});
 								}, false);
-							</script>`
-						)
+							</script>`,
+						),
 					);
 					return;
 				}
@@ -183,7 +183,7 @@ function iframeRefererTest(props: {
 				runTest(async () => {
 					${assertions}
 				}, true);
-			</script>`
+			</script>`,
 		);
 	};
 
@@ -193,7 +193,7 @@ function iframeRefererTest(props: {
 		async start() {
 			const handleChildRequest = (
 				req: http.IncomingMessage,
-				res: http.ServerResponse
+				res: http.ServerResponse,
 			) => {
 				if (
 					new URL(req.url ?? "/", "http://localhost").pathname !== childPathname

@@ -42,7 +42,7 @@ export default [
 			localStorage.removeItem(P + "alpha");
 			assertEqual(localStorage.getItem(P + "alpha"), null, "removeItem");
 			assertEqual(grew(), 1, "length after removeItem");
-		`
+		`,
 	),
 	storageTest(
 		"storage-object-keys",
@@ -63,7 +63,7 @@ export default [
 			);
 			const parsed = JSON.parse(JSON.stringify(localStorage));
 			assertEqual(parsed[P + "alpha"], "1", "JSON.stringify");
-		`
+		`,
 	),
 	storageTest(
 		"storage-for-in",
@@ -75,7 +75,7 @@ export default [
 			assert(seen.includes(P + "alpha"), "for-in must yield the page's key, got " + JSON.stringify(seen));
 			assert(!seen.some((k) => k.includes("scramjet")),
 				"for-in must not leak namespaced keys, got " + JSON.stringify(seen));
-		`
+		`,
 	),
 	storageTest(
 		"storage-property-access",
@@ -88,7 +88,7 @@ export default [
 			assert((P + "gamma") in localStorage, "in operator");
 			localStorage.setItem(P + "delta", "4");
 			assertEqual(localStorage[P + "delta"], "4", "setItem is visible as a property");
-		`
+		`,
 	),
 	storageTest(
 		"storage-coercion-and-brand",
@@ -103,7 +103,7 @@ export default [
 			assertEqual(localStorage, window.localStorage, "stable identity");
 			assertEqual(typeof localStorage.setItem, "function", "setItem is a function");
 			assertEqual(typeof localStorage.key, "function", "key is a function");
-		`
+		`,
 	),
 	storageTest(
 		"storage-session-isolation",
@@ -121,7 +121,7 @@ export default [
 			} finally {
 				sessionStorage.removeItem(P + "s");
 			}
-		`
+		`,
 	),
 	storageTest(
 		"storage-json-payload",
@@ -133,7 +133,7 @@ export default [
 			localStorage.setItem(P + "weird:key/with.chars", "v");
 			assertEqual(localStorage.getItem(P + "weird:key/with.chars"), "v", "punctuation in keys");
 			assert(mine().includes(P + "weird:key/with.chars"), "and it enumerates");
-		`
+		`,
 	),
 
 	// ------------------------------------------------------------------
@@ -151,7 +151,7 @@ export default [
 			assert(keys.includes(P + "alpha"), "key(i) must return keys, got " + JSON.stringify(keys));
 			assert(keys.includes(P + "beta"), "key(i) must return every key");
 			assertEqual(localStorage.key(localStorage.length + 50), null, "an out-of-range index is null");
-		`
+		`,
 	),
 	storageTest(
 		// KNOWN FAILURE: `delete storage.foo` does not remove the entry.
@@ -162,7 +162,7 @@ export default [
 			assertEqual(delete localStorage[P + "gamma"], true, "delete reports success");
 			assertEqual(localStorage.getItem(P + "gamma"), null, "delete must remove the entry");
 			assertEqual(grew(), 0, "length back to where it started");
-		`
+		`,
 	),
 	basicTest({
 		// KNOWN FAILURE: clear() is a no-op - length, getItem, key(i) and

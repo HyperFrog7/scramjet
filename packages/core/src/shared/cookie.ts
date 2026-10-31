@@ -118,7 +118,7 @@ export class CookieJar {
 	getCookies(
 		url: URL,
 		fromJs: boolean,
-		sameSiteContext: "strict" | "lax" | "cross-site" = "strict"
+		sameSiteContext: "strict" | "lax" | "cross-site" = "strict",
 	): string {
 		const now = _Date.now();
 		const hostname = url.hostname;
@@ -162,7 +162,7 @@ export class CookieJar {
 
 		return validCookies
 			.map((cookie) =>
-				cookie.name ? `${cookie.name}=${cookie.value}` : cookie.value
+				cookie.name ? `${cookie.name}=${cookie.value}` : cookie.value,
 			)
 			.join("; ");
 	}

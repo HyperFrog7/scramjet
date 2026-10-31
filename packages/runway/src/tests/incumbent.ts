@@ -17,7 +17,9 @@ function navIncumbenceTest(props: {
 				if (req.url! === "/") {
 					res.setHeader("Content-Type", "text/html");
 					res.end(
-						doc(`<script>${props.topjs}</script><iframe src="/dir/frame.html">`)
+						doc(
+							`<script>${props.topjs}</script><iframe src="/dir/frame.html">`,
+						),
 					);
 				} else if (req.url! === "/dir/frame.html") {
 					res.setHeader("Content-Type", "text/html");
@@ -28,14 +30,14 @@ function navIncumbenceTest(props: {
 						res.end(doc('<script>opener.fail("wrong window opened")</script>'));
 					} else {
 						res.end(
-							doc('<script>opener.pass("correct window opened")</script>')
+							doc('<script>opener.pass("correct window opened")</script>'),
 						);
 					}
 				} else if (req.url! === "/flag.html") {
 					res.setHeader("Content-Type", "text/html");
 					if (props.reverse) {
 						res.end(
-							doc('<script>opener.pass("correct window opened")</script>')
+							doc('<script>opener.pass("correct window opened")</script>'),
 						);
 					} else {
 						res.end(doc('<script>opener.fail("wrong window opened")</script>'));

@@ -12,7 +12,7 @@ export default function (client: ScramjetClient, self: Self) {
 					code,
 					"(setTimeout string eval)",
 					client.context,
-					client.meta
+					client.meta,
 				);
 			}
 		},

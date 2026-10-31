@@ -57,7 +57,7 @@ export default [
 			i.className = "imported";
 			document.body.appendChild(i);
 			assertEqual(getComputedStyle(i).color, "rgb(4, 5, 6)", "@import inside it applied too");
-		`
+		`,
 	),
 	cssTest(
 		"stylesheets-link-element-urls",
@@ -70,7 +70,7 @@ export default [
 			const sheet = [...document.styleSheets].find((s) => (s.href || "").includes("s.css"));
 			assert(sheet, "the sheet appears in document.styleSheets");
 			assert(sheet.cssRules.length >= 1, "cssRules are readable");
-		`
+		`,
 	),
 	cssTest(
 		"stylesheets-constructable-applies",
@@ -85,7 +85,7 @@ export default [
 			assertEqual(sheet.cssRules.length, 1, "cssRules");
 			await sheet.replace(".ctor { color: rgb(9, 9, 9); }");
 			assertEqual(getComputedStyle(d).color, "rgb(9, 9, 9)", "replace() updates it");
-		`
+		`,
 	),
 	cssTest(
 		"stylesheets-adopted-in-shadow-root",
@@ -100,7 +100,7 @@ export default [
 			d.className = "sh";
 			root.appendChild(d);
 			assertEqual(getComputedStyle(d).color, "rgb(10, 11, 12)", "adoptedStyleSheets in a shadow root");
-		`
+		`,
 	),
 	cssTest(
 		"stylesheets-fontface",
@@ -114,7 +114,7 @@ export default [
 			document.body.appendChild(d);
 			assertEqual(getComputedStyle(d).fontFamily, "probefont", "font-family round trip");
 			assertEqual(typeof document.fonts.ready, "object", "document.fonts.ready");
-		`
+		`,
 	),
 	cssTest(
 		"stylesheets-custom-properties",
@@ -127,7 +127,7 @@ export default [
 			assertEqual(getComputedStyle(d).getPropertyValue("--probe-var").trim(), "42px", "computed custom property");
 			assertEqual(getComputedStyle(d).width, "42px", "var() resolved");
 			assertEqual(d.getAttribute("style"), "--probe-var: 42px; width: var(--probe-var);", "style attribute");
-		`
+		`,
 	),
 
 	// ------------------------------------------------------------------
@@ -149,7 +149,7 @@ export default [
 				assert(!imported.styleSheet.href.includes("/~/sj/"),
 					"the imported sheet's href leaks: " + imported.styleSheet.href);
 			}
-		`
+		`,
 	),
 	cssTest(
 		// KNOWN FAILURE: a url() written through a constructable stylesheet is
@@ -168,6 +168,6 @@ export default [
 			assert(!bg.includes("/~/sj/"), "the computed background must not expose the proxy URL: " + bg);
 			assertEqual(bg, 'url("' + location.origin + '/cbg.png")', "computed background");
 			assert(!sheet.cssRules[0].cssText.includes("/~/sj/"), "cssText leaks: " + sheet.cssRules[0].cssText);
-		`
+		`,
 	),
 ];

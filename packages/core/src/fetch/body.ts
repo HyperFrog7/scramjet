@@ -21,7 +21,7 @@ export async function rewriteBody(
 	handler: ScramjetFetchHandler,
 	request: ScramjetFetchRequest,
 	parsed: ScramjetFetchParsed,
-	response: BareResponse
+	response: BareResponse,
 ): Promise<BodyType> {
 	switch (parsed.destination) {
 		case "iframe":
@@ -31,7 +31,7 @@ export async function rewriteBody(
 				const bytes = new Uint8Array(buf);
 				const encoding = sniffEncoding(
 					bytes,
-					response.headers.get("content-type")
+					response.headers.get("content-type"),
 				);
 				const htmlContent = new _TextDecoder(encoding).decode(bytes);
 
@@ -60,7 +60,7 @@ export async function rewriteBody(
 					response.url,
 					handler.context,
 					parsed.meta,
-					parsed.isModule
+					parsed.isModule,
 				);
 
 				if (
@@ -85,7 +85,7 @@ export async function rewriteBody(
 				response.url,
 				handler.context,
 				parsed.meta,
-				parsed.isModule
+				parsed.isModule,
 			);
 		default:
 			return response.body;

@@ -39,7 +39,7 @@ function getEnd(rewrite: Rewrite): number {
 function registerRewrites(
 	client: ScramjetClient,
 	buf: Array<number>,
-	tag: string
+	tag: string,
 ) {
 	const sourcemap = Uint8Array.from(buf);
 	const view = new DataView(sourcemap.buffer);
@@ -67,7 +67,7 @@ function registerRewrites(
 			cursor += 4;
 
 			const oldStr = decoder.decode(
-				sourcemap.subarray(cursor, cursor + oldLen)
+				sourcemap.subarray(cursor, cursor + oldLen),
 			);
 
 			rewrites.push({ type, start, end, str: oldStr });
@@ -111,7 +111,7 @@ function extractTag(fn: string): [string, number, number] | null {
 
 function doUnrewrite(
 	client: ScramjetClient,
-	ctx: ProxyCtx<"Function.prototype.toString", "apply">
+	ctx: ProxyCtx<"Function.prototype.toString", "apply">,
 ) {
 	const stringified: string = ctx.fn.call(ctx.this);
 

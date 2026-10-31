@@ -9,7 +9,7 @@ export function rewriteWorkers(
 	url: string,
 	context: ScramjetContext,
 	meta: URLMeta,
-	isModule: boolean
+	isModule: boolean,
 ) {
 	const script = (script: string) => {
 		if (isModule) {

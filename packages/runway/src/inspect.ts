@@ -85,7 +85,7 @@ async function main() {
 				},
 			});
 			console.log(
-				`🌐 Test "${test.name}" running at ${runwayTestTargetUrl(test)}`
+				`🌐 Test "${test.name}" running at ${runwayTestTargetUrl(test)}`,
 			);
 		}
 	}
@@ -100,7 +100,7 @@ async function main() {
 				console.log("✅ passed");
 			} catch (error) {
 				console.log(
-					`❌ failed: ${error instanceof Error ? error.message : String(error)}`
+					`❌ failed: ${error instanceof Error ? error.message : String(error)}`,
 				);
 			}
 		}
@@ -160,7 +160,7 @@ async function main() {
 	try {
 		await page.waitForFunction(
 			() => typeof (window as any).__runwayNavigate === "function",
-			{ timeout: 30000 }
+			{ timeout: 30000 },
 		);
 		console.log("✅ Harness ready\n");
 	} catch (e) {
@@ -174,7 +174,7 @@ async function main() {
 
 	if (firstTest.playwrightFn) {
 		console.log(
-			`🎭 Playwright test "${firstTest.name}" - use navigate() in your test`
+			`🎭 Playwright test "${firstTest.name}" - use navigate() in your test`,
 		);
 		console.log("   Running playwright test function...\n");
 
@@ -191,7 +191,7 @@ async function main() {
 			console.log("\n✅ Playwright test completed successfully");
 		} catch (error) {
 			console.log(
-				`\n❌ Playwright test failed: ${error instanceof Error ? error.message : error}`
+				`\n❌ Playwright test failed: ${error instanceof Error ? error.message : error}`,
 			);
 		}
 	} else {
@@ -209,7 +209,7 @@ async function main() {
 			{
 				hosts: runwayCleartextHttpsHostList(firstTest),
 				site: runwayCleartextSiteForHarness(firstTest),
-			}
+			},
 		);
 
 		if (firstTest.topLevelScramjet) {

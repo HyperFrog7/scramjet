@@ -166,7 +166,7 @@ class RunwayCleartextHttpsTransport {
 			onopen,
 			onmessage,
 			onclose,
-			onerror
+			onerror,
 		);
 	}
 }

@@ -6,7 +6,7 @@ export default function (client: ScramjetClient, self: Self) {
 		"Function",
 		null,
 		"url",
-		"return import(url)"
+		"return import(url)",
 	);
 
 	Object_defineProperty(self, client.config.globals.importfn, {

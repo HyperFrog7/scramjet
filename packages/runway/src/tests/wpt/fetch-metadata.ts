@@ -296,7 +296,7 @@ function testNameForPath(relPath: string) {
 function serve(
 	response: ServerResponse,
 	body: string,
-	headers: Record<string, string> = {}
+	headers: Record<string, string> = {},
 ) {
 	response.writeHead(200, {
 		"Access-Control-Allow-Origin": "*",
@@ -324,7 +324,7 @@ function replaceTokens(
 		crossHost: string;
 		searchParams?: URLSearchParams;
 		requestHeaders?: Record<string, string>;
-	}
+	},
 ) {
 	return (
 		source
@@ -336,7 +336,7 @@ function replaceTokens(
 			.replaceAll("{{ports[https][0]}}", String(props.httpsPort))
 			.replaceAll(
 				/\{\{GET\[([^\]]+)\]\}\}/g,
-				(_match, key: string) => props.searchParams?.get(key) ?? ""
+				(_match, key: string) => props.searchParams?.get(key) ?? "",
 			)
 			// `{{headers[name]}}` echoes the value of an incoming request header.
 			// wptserve does this server-side; we mirror it here so tests like
@@ -344,7 +344,8 @@ function replaceTokens(
 			// own request headers.
 			.replaceAll(
 				/\{\{headers\[([^\]]+)\]\}\}/gi,
-				(_match, key: string) => props.requestHeaders?.[key.toLowerCase()] ?? ""
+				(_match, key: string) =>
+					props.requestHeaders?.[key.toLowerCase()] ?? "",
 			)
 			// Each `{{uuid()}}` should yield a distinct UUID per match, mirroring
 			// wptserve's behaviour. Use a function-replacement so the closure runs
@@ -355,7 +356,7 @@ function replaceTokens(
 
 function pickFirstHeader(
 	headers: Record<string, string[] | string | undefined>,
-	name: string
+	name: string,
 ): string {
 	const value = headers[name.toLowerCase()];
 	if (Array.isArray(value)) return value[0] ?? "";
@@ -440,7 +441,7 @@ function vendoredPathForRequest(pathname: string) {
 
 async function loadHeadersSidecar(
 	resolvedPath: string,
-	props: Parameters<typeof replaceTokens>[1]
+	props: Parameters<typeof replaceTokens>[1],
 ): Promise<Record<string, string>> {
 	const sidecarPath = `${resolvedPath}.sub.headers`;
 	let raw: string;
@@ -477,7 +478,7 @@ async function serveVendoredFile(
 		crossHost: string;
 		searchParams: URLSearchParams;
 		requestHeaders?: Record<string, string>;
-	}
+	},
 ) {
 	const resolvedPath = vendoredPathForRequest(requestPath);
 	if (!resolvedPath) return false;
@@ -526,7 +527,7 @@ async function ensureServer() {
 			let port = 0;
 			const handle = async (
 				request: IncomingMessage,
-				response: ServerResponse
+				response: ServerResponse,
 			) => {
 				try {
 					const hostHeader =
@@ -545,7 +546,7 @@ async function ensureServer() {
 							: FETCH_METADATA_CROSS_SITE_HOST;
 					const requestUrl = new URL(
 						request.url || "/",
-						`http://${hostHeader}`
+						`http://${hostHeader}`,
 					);
 
 					if (requestUrl.pathname === "/resources/testharness.js") {
@@ -621,10 +622,10 @@ async function ensureServer() {
 												k === "x-scramjet-debug" ||
 												k === "host" ||
 												k === "origin" ||
-												k === "referer"
-										)
-									)
-								)
+												k === "referer",
+										),
+									),
+								),
 							);
 						}
 						const mime = requestUrl.searchParams.get("mime");
@@ -662,7 +663,7 @@ const data = ${payload};
 if (window.opener) window.opener.postMessage(data, "*");
 if (window.top !== window) window.top.postMessage(data, "*");
 </script>`,
-							{ "Content-Type": "text/html; charset=utf-8" }
+							{ "Content-Type": "text/html; charset=utf-8" },
 						);
 						return;
 					}
@@ -700,7 +701,7 @@ if (window.top !== window) window.top.postMessage(data, "*");
 							} else {
 								await callback.fail(
 									parsed.message || "WPT reported failure",
-									parsed.details
+									parsed.details,
 								);
 							}
 							response.writeHead(204, { "Access-Control-Allow-Origin": "*" });
@@ -745,7 +746,7 @@ if (window.top !== window) window.top.postMessage(data, "*");
 					response.end(
 						error instanceof Error
 							? error.stack || error.message
-							: String(error)
+							: String(error),
 					);
 				}
 			};
@@ -776,7 +777,7 @@ function metadataPageTest(entryPath: string): Test {
 	// (cross-site). HTTP variants must use a non-loopback host so that
 	// destinations are non-trustworthy and Sec-Fetch-* is omitted.
 	const isHttpsVariant = /\.https\.(?:optional\.|tentative\.)?sub\.html$/.test(
-		entryPath
+		entryPath,
 	);
 	const scheme: "http" | "https" = isHttpsVariant ? "https" : "http";
 	const test: Test = {
@@ -805,7 +806,7 @@ function metadataPageTest(entryPath: string): Test {
 			const url = new URL(basePath, baseOrigin);
 			url.searchParams.set(
 				"runway_report",
-				`${baseOrigin}/__runway_report?token=${token}`
+				`${baseOrigin}/__runway_report?token=${token}`,
 			);
 			test.path = `${url.pathname}${url.search}`;
 		},

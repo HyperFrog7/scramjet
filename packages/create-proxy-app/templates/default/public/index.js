@@ -16,7 +16,7 @@ async function init() {
 		frameUrl.textContent = url;
 	});
 	const catchEscapedLinks = new $scramjetUtils.CatchEscapedLinksPlugin(
-		(url) => new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin)
+		(url) => new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin),
 	);
 
 	frame = controller.createFrame(frameElement, {

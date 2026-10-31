@@ -43,7 +43,7 @@ function isAsciiAlpha(codePoint: number): boolean {
 }
 
 export function parseDeclarativeRefresh(
-	input: string
+	input: string,
 ): ParsedDeclarativeRefresh | null {
 	if (input.length === 0) {
 		return null;

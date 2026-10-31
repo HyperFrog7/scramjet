@@ -42,7 +42,7 @@ const Monaco: Component<MonacoProps, {}, { instance?: any }> = function (cx) {
 			monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
 			() => {
 				this.onSave?.();
-			}
+			},
 		);
 
 		use(this.value).listen((next) => {
@@ -57,7 +57,7 @@ const Monaco: Component<MonacoProps, {}, { instance?: any }> = function (cx) {
 			if (!this.instance || !this.instance.getModel()) return;
 			monaco.editor.setModelLanguage(
 				this.instance.getModel(),
-				next ?? "plaintext"
+				next ?? "plaintext",
 			);
 		});
 

@@ -59,5 +59,5 @@ addEventListener(
 					console.error("xhr failed");
 					view.setUint8(0, 1);
 				};
-	}
+	},
 );

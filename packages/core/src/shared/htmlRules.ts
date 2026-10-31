@@ -10,7 +10,7 @@ export const htmlRules: {
 		value: string,
 		context: ScramjetContext,
 		meta: URLMeta,
-		attrs?: Record<string, string | undefined>
+		attrs?: Record<string, string | undefined>,
 	) => string | null;
 }[] = [
 	{
@@ -109,7 +109,7 @@ export const htmlRules: {
 					inline: true,
 					source: meta.origin.href,
 					apisource: "set HTMLIFrameElement.prototype.srcdoc",
-				}
+				},
 			),
 
 		// srcdoc

@@ -19,7 +19,7 @@ export default function (client: ScramjetClient, _self: Self) {
 		return entries.filter((entry) => {
 			for (const file of client.config.maskedfiles) {
 				const name = String(
-					client.descriptors.get("PerformanceEntry.prototype.name", entry)
+					client.descriptors.get("PerformanceEntry.prototype.name", entry),
 				);
 				if (name.endsWith(file)) {
 					return false;
@@ -45,6 +45,6 @@ export default function (client: ScramjetClient, _self: Self) {
 
 				return ctx.return(filterEntries(entries));
 			},
-		}
+		},
 	);
 }

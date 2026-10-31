@@ -35,7 +35,7 @@ export async function registerSw(path: string): Promise<ServiceWorker> {
 				() => {
 					resolve();
 				},
-				{ once: true }
+				{ once: true },
 			);
 		});
 

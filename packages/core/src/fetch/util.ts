@@ -4,7 +4,7 @@ import { ScramjetFetchParsed } from ".";
 
 export function normalizeContentType(
 	parsed: ScramjetFetchParsed,
-	headers: ScramjetHeaders
+	headers: ScramjetHeaders,
 ) {
 	if (!isDocument(parsed)) return;
 
@@ -26,7 +26,7 @@ export function isDocument(parsed: ScramjetFetchParsed) {
 export function createReferrerString(
 	clientUrl: URL,
 	resource: URL,
-	policy: string | null
+	policy: string | null,
 ): string {
 	policy ||= "strict-origin-when-cross-origin";
 	const originIsHttps = clientUrl.protocol === "https:";

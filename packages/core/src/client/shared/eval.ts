@@ -16,7 +16,7 @@ export default function (client: ScramjetClient, self: Self) {
 				js,
 				"(direct eval proxy)",
 				client.context,
-				client.meta
+				client.meta,
 			);
 
 			return rewritten;
@@ -41,8 +41,8 @@ export function createIndirectEval(client: ScramjetClient) {
 					js,
 					"(indirect eval proxy)",
 					client.context,
-					client.meta
-				) as string
+					client.meta,
+				) as string,
 			);
 		},
 	});

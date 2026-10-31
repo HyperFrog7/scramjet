@@ -69,7 +69,7 @@ export default [
 						"Set-Cookie": "bsecret=bvalue; Path=/",
 					});
 					res.end(
-						'<!DOCTYPE html><html><body><p id="secret">B-SIDE-SECRET</p></body></html>'
+						'<!DOCTYPE html><html><body><p id="secret">B-SIDE-SECRET</p></body></html>',
 					);
 					return;
 				}
@@ -82,7 +82,7 @@ export default [
 					JSON.stringify({
 						host: req.headers.host,
 						cookie: req.headers.cookie ?? null,
-					})
+					}),
 				);
 			});
 		},

@@ -32,7 +32,7 @@ export class RpcHelper<
 	constructor(
 		private methods: MethodsDefinition<Local>,
 		private id: string,
-		private sendRaw: (data: any, transfer: Transferable[]) => void
+		private sendRaw: (data: any, transfer: Transferable[]) => void,
 	) {}
 
 	recieve(data: any) {
@@ -67,7 +67,7 @@ export class RpcHelper<
 								$data: r?.[0],
 							},
 						},
-						r?.[1]
+						r?.[1],
 					);
 				})
 				.catch((err: any) => {
@@ -80,7 +80,7 @@ export class RpcHelper<
 								$error: err?.toString() || "Unknown error",
 							},
 						},
-						[]
+						[],
 					);
 				});
 		}
@@ -89,7 +89,7 @@ export class RpcHelper<
 	call<Method extends keyof Remote>(
 		method: Method,
 		args: Remote[Method][0],
-		transfer: Transferable[] = []
+		transfer: Transferable[] = [],
 	): Promise<Remote[Method][1]> {
 		const token = this.counter++;
 		return new Promise((resolve, reject) => {
@@ -103,7 +103,7 @@ export class RpcHelper<
 						$token: token,
 					},
 				},
-				transfer
+				transfer,
 			);
 		});
 	}

@@ -167,11 +167,11 @@ export const COOKIE_WPT_PAGES = COOKIE_WPT_FILES.filter(
 	(file) =>
 		file.endsWith(".html") &&
 		!file.includes("/resources/") &&
-		!file.endsWith(".headers")
+		!file.endsWith(".headers"),
 );
 
 export function includeCookieFile(relPath: string) {
 	return COOKIE_WPT_FILE_SET.has(
-		normalize(relPath) as (typeof COOKIE_WPT_FILES)[number]
+		normalize(relPath) as (typeof COOKIE_WPT_FILES)[number],
 	);
 }

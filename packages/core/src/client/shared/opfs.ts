@@ -12,7 +12,7 @@ export default function (client: ScramjetClient) {
 						`${client.url.origin.replace(/\/|\s|\./g, "-")}`,
 						{
 							create: true,
-						}
+						},
 					);
 					Object_defineProperty(directory, "name", {
 						value: "",
@@ -20,7 +20,7 @@ export default function (client: ScramjetClient) {
 					});
 
 					return directory;
-				})()
+				})(),
 			);
 		},
 	});

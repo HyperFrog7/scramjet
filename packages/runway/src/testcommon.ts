@@ -82,7 +82,7 @@ export function runwayCleartextHttpsHostList(test: Test): string[] {
  * `https://(sub.)host/…` to the real HTTP port {@link Test.port}.
  */
 export function runwayCleartextSiteForHarness(
-	test: Test
+	test: Test,
 ): { roots: string[]; httpPort: number } | null {
 	const roots = runwayCleartextRoots(test);
 	if (roots.length === 0 || !test.port) return null;
@@ -151,7 +151,7 @@ export function basicTest(props: {
 					} else if (req.url === "/script.js") {
 						res.writeHead(200, { "Content-Type": "application/javascript" });
 						res.end(
-							`runTest(async () => {\n${props.js}\n}, ${props.autoPass ?? true});`
+							`runTest(async () => {\n${props.js}\n}, ${props.autoPass ?? true});`,
 						);
 					} else {
 						res.writeHead(404);
@@ -177,7 +177,7 @@ export function basicTest(props: {
 				new Promise<void>((_, reject) => {
 					setTimeout(
 						() => reject(new Error("Server stop timed out after 5 seconds")),
-						5000
+						5000,
 					);
 				}),
 			]);
@@ -241,7 +241,7 @@ export function htmlTest(props: {
 				new Promise<void>((_, reject) => {
 					setTimeout(
 						() => reject(new Error("Server stop timed out after 5 seconds")),
-						5000
+						5000,
 					);
 				}),
 			]);
@@ -314,11 +314,11 @@ export function directTest(props: {
 			const assertEqual = (
 				actual: unknown,
 				expected: unknown,
-				message = "Values are not equal"
+				message = "Values are not equal",
 			) => {
 				if (!Object.is(actual, expected)) {
 					throw new Error(
-						`${message}\nExpected: ${String(expected)}\nActual: ${String(actual)}`
+						`${message}\nExpected: ${String(expected)}\nActual: ${String(actual)}`,
 					);
 				}
 			};
@@ -337,7 +337,7 @@ export function serverTest(props: {
 		ctx: {
 			pass: (message?: string, details?: any) => Promise<void>;
 			fail: (message?: string, details?: any) => Promise<void>;
-		}
+		},
 	) => Promise<void>;
 	autoPass?: boolean;
 	js?: string;
@@ -396,11 +396,11 @@ export function serverTest(props: {
 						} else if (req.url === "/script.js") {
 							res.writeHead(200, { "Content-Type": "application/javascript" });
 							res.end(
-								`runTest(async () => {\n${props.js || ""}\n}, ${props.autoPass || false});`
+								`runTest(async () => {\n${props.js || ""}\n}, ${props.autoPass || false});`,
 							);
 						}
 					}
-				}
+				},
 			);
 			server.on("connection", (socket) => {
 				activeSockets.add(socket);
@@ -434,7 +434,7 @@ export function serverTest(props: {
 				new Promise<void>((_, reject) => {
 					setTimeout(
 						() => reject(new Error("Server stop timed out after 5 seconds")),
-						5000
+						5000,
 					);
 				}),
 			]);
@@ -492,7 +492,7 @@ export function multiFrameTest(props: {
 					const subframesHtml: string[] = [];
 					for (const subframe of subframes[id]) {
 						const server = Object.values(servers).find(
-							(server) => server.js[subframe]
+							(server) => server.js[subframe],
 						)!;
 						subframesHtml.push(`
 							<iframe src="http://localhost:${server.port}/${subframe}"></iframe>
@@ -518,7 +518,7 @@ export function multiFrameTest(props: {
 		serversOpenPromise.push(
 			new Promise((resolve) => {
 				server.listen(port, () => resolve());
-			})
+			}),
 		);
 
 		return {
@@ -546,7 +546,7 @@ export function multiFrameTest(props: {
 			url,
 		});
 		server.subframes[frame.id] = frame.subframes!.map(
-			(subframe) => subframe.id!
+			(subframe) => subframe.id!,
 		);
 
 		for (const subframe of frame.subframes) {
@@ -569,7 +569,7 @@ export function multiFrameTest(props: {
 					new Promise((resolve) => {
 						server.server.closeAllConnections();
 						server.server.close(() => resolve());
-					})
+					}),
 				);
 			}
 			await Promise.all(promises);

@@ -6,7 +6,7 @@ let testServerPort = 9100;
 
 // Helper to create a test server that serves pages with custom scheme links
 function createTestServer(
-	htmlContent: string
+	htmlContent: string,
 ): Promise<{ server: http.Server; port: number }> {
 	const port = testServerPort++;
 	return new Promise((resolve) => {
@@ -96,17 +96,17 @@ export default [
 
 				// Check if custom-scheme URL was captured
 				const customSchemeNav = navigatedUrls.find((url) =>
-					url.startsWith("custom-scheme://")
+					url.startsWith("custom-scheme://"),
 				);
 				if (!customSchemeNav) {
 					throw new Error(
-						`Expected navigation to custom-scheme://, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to custom-scheme://, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
 				if (!customSchemeNav.includes("example.com/test")) {
 					throw new Error(
-						`Expected custom-scheme://example.com/test, got: ${customSchemeNav}`
+						`Expected custom-scheme://example.com/test, got: ${customSchemeNav}`,
 					);
 				}
 			} finally {
@@ -141,17 +141,17 @@ export default [
 				await page.waitForTimeout(500);
 
 				const mailtoNav = navigatedUrls.find((url) =>
-					url.startsWith("mailto:")
+					url.startsWith("mailto:"),
 				);
 				if (!mailtoNav) {
 					throw new Error(
-						`Expected navigation to mailto:, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to mailto:, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
 				if (!mailtoNav.includes("test@example.com")) {
 					throw new Error(
-						`Expected mailto:test@example.com, got: ${mailtoNav}`
+						`Expected mailto:test@example.com, got: ${mailtoNav}`,
 					);
 				}
 			} finally {
@@ -188,7 +188,7 @@ export default [
 				const telNav = navigatedUrls.find((url) => url.startsWith("tel:"));
 				if (!telNav) {
 					throw new Error(
-						`Expected navigation to tel:, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to tel:, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
@@ -232,11 +232,11 @@ export default [
 				await page.waitForTimeout(500);
 
 				const steamNav = navigatedUrls.find((url) =>
-					url.startsWith("steam://")
+					url.startsWith("steam://"),
 				);
 				if (!steamNav) {
 					throw new Error(
-						`Expected navigation to steam://, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to steam://, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
@@ -280,17 +280,17 @@ export default [
 				await page.waitForTimeout(500);
 
 				const vscodeNav = navigatedUrls.find((url) =>
-					url.startsWith("vscode://")
+					url.startsWith("vscode://"),
 				);
 				if (!vscodeNav) {
 					throw new Error(
-						`Expected navigation to vscode://, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to vscode://, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
 				if (!vscodeNav.includes("file/path/to/file.ts")) {
 					throw new Error(
-						`Expected vscode://file/path/to/file.ts, got: ${vscodeNav}`
+						`Expected vscode://file/path/to/file.ts, got: ${vscodeNav}`,
 					);
 				}
 			} finally {
@@ -342,17 +342,17 @@ export default [
 				await page.waitForTimeout(500);
 
 				const discordNav = navigatedUrls.find((url) =>
-					url.startsWith("discord://")
+					url.startsWith("discord://"),
 				);
 				if (!discordNav) {
 					throw new Error(
-						`Expected navigation to discord://, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to discord://, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
 				if (!discordNav.includes("users/123456789")) {
 					throw new Error(
-						`Expected discord://users/123456789, got: ${discordNav}`
+						`Expected discord://users/123456789, got: ${discordNav}`,
 					);
 				}
 			} finally {
@@ -390,11 +390,11 @@ export default [
 				await page.waitForTimeout(500);
 
 				const myappNav = navigatedUrls.find((url) =>
-					url.startsWith("myapp://")
+					url.startsWith("myapp://"),
 				);
 				if (!myappNav) {
 					throw new Error(
-						`Expected navigation to myapp://, but got: ${navigatedUrls.join(", ")}`
+						`Expected navigation to myapp://, but got: ${navigatedUrls.join(", ")}`,
 					);
 				}
 
@@ -467,7 +467,7 @@ export default [
 							.filter((u) => u.startsWith(scheme))
 							.join(", ");
 						throw new Error(
-							`Expected ${expected}, but got: ${found || "none"}. All URLs: ${navigatedUrls.join(", ")}`
+							`Expected ${expected}, but got: ${found || "none"}. All URLs: ${navigatedUrls.join(", ")}`,
 						);
 					}
 				}

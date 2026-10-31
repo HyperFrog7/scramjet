@@ -463,7 +463,7 @@ interface Attribute {
  */
 function getAttribute(
 	bytes: Uint8Array,
-	pos: { value: number }
+	pos: { value: number },
 ): Attribute | null {
 	// Step 1: Skip spaces and slashes
 	while (pos.value < bytes.length && isSpaceOrSlash(bytes[pos.value])) {
@@ -612,7 +612,7 @@ function getAttribute(
  */
 export function prescanByteStream(
 	bytes: Uint8Array,
-	limit: number = 1024
+	limit: number = 1024,
 ): string | null {
 	const end = Math_min(bytes.length, limit);
 	const pos = { value: 0 };
@@ -936,7 +936,7 @@ export function bomSniff(bytes: Uint8Array): string | null {
  * This follows what MIME Sniffing / HTTP specs say: find `charset=` parameter.
  */
 export function extractCharsetFromContentType(
-	contentType: string
+	contentType: string,
 ): string | null {
 	// Find the parameters section (after the first semicolon)
 	const semicolonIdx = contentType.indexOf(";");
@@ -1040,7 +1040,7 @@ export function extractCharsetFromContentType(
  */
 export function sniffEncoding(
 	bytes: Uint8Array,
-	contentTypeHeader: string | null
+	contentTypeHeader: string | null,
 ): string {
 	// Step 1: BOM sniff
 	const bom = bomSniff(bytes);

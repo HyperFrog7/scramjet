@@ -46,7 +46,7 @@ export default [
 			assertEqual(m.v, "modvalue", "named export");
 			assertEqual(await import("/mod.js"), m, "module identity is cached across imports");
 			assertEqual(typeof m.metaUrl, "string", "import.meta.url is a string");
-		`
+		`,
 	),
 	modTest(
 		"modules-specifier-resolution",
@@ -55,7 +55,7 @@ export default [
 				"a module importing another module by absolute path");
 			assertEqual((await import("/modrel.js")).rel, "rel:modvalue",
 				"a relative specifier resolves against the importing module");
-		`
+		`,
 	),
 	modTest(
 		"modules-inline-module-script",
@@ -69,7 +69,7 @@ export default [
 				await new Promise((r) => setTimeout(r, 50));
 			}
 			assertEqual(window.__inlineResult, "modvalue", "an inline module script with a static import");
-		`
+		`,
 	),
 	modTest(
 		"modules-script-injection",
@@ -86,7 +86,7 @@ export default [
 				"document.currentScript.src inside it: " + window.__currentScriptSrc);
 			assertEqual(s.src, location.origin + "/classic.js", "script.src property");
 			assertEqual(s.getAttribute("src"), "/classic.js", "script src attribute");
-		`
+		`,
 	),
 	modTest(
 		"modules-script-order",
@@ -104,7 +104,7 @@ export default [
 			await new Promise((r) => setTimeout(r, 800));
 			assertDeepEqual(window.__order, ["a", "b"], "async=false injected scripts keep document order");
 			assertEqual(window.__classicRan, 2, "both ran");
-		`
+		`,
 	),
 
 	// ------------------------------------------------------------------
@@ -122,7 +122,7 @@ export default [
 			assertEqual(m.metaUrl, location.origin + "/mod.js", "import.meta.url");
 			const s = await import("/modsibling.js");
 			assertEqual(s.sibling, location.origin + "/mod.js", "a sibling URL built from import.meta.url");
-		`
+		`,
 	),
 	modTest(
 		// KNOWN FAILURE: <script type="importmap"> is not rewritten, so a bare
@@ -140,7 +140,7 @@ export default [
 			try { m = await import("bare-spec"); } catch (e) { err = e; }
 			assert(!err, "a bare specifier from an import map must resolve: " + (err && err.message));
 			assertEqual(m && m.v, "modvalue", "import map resolution");
-		`
+		`,
 	),
 	modTest(
 		"modules-preload-link",
@@ -162,7 +162,7 @@ export default [
 			s.src = "/p.js";
 			await new Promise((res, rej) => { s.onload = res; s.onerror = rej; document.head.appendChild(s); });
 			assertEqual(window.__preloaded, true, "the preloaded script then ran");
-		`
+		`,
 	),
 	modTest(
 		"modules-modulepreload-link",
@@ -178,6 +178,6 @@ export default [
 			});
 			assert(loaded !== false, "modulepreload did not error: " + loaded);
 			assertEqual(l.href, location.origin + "/p.js", "modulepreload href");
-		`
+		`,
 	),
 ];

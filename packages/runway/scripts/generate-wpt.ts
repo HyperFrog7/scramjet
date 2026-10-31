@@ -84,12 +84,12 @@ async function copySelectedFiles(options: {
 }) {
 	const absoluteSourceRoot = path.join(
 		options.upstreamRoot,
-		options.sourceRoot
+		options.sourceRoot,
 	);
 	const files = await walkFiles(absoluteSourceRoot);
 	const selected = files
 		.map((filePath) =>
-			path.relative(options.upstreamRoot, filePath).replaceAll("\\", "/")
+			path.relative(options.upstreamRoot, filePath).replaceAll("\\", "/"),
 		)
 		.filter(options.include);
 
@@ -170,7 +170,7 @@ async function main() {
 		});
 
 		console.log(
-			`Generated ${referrerFiles.length} referrer-policy file(s), ${fetchMetadataFiles.length} fetch-metadata file(s), ${fetchMetadataPageFiles.length} fetch-metadata page file(s), and ${cookieFiles.length} cookie file(s).`
+			`Generated ${referrerFiles.length} referrer-policy file(s), ${fetchMetadataFiles.length} fetch-metadata file(s), ${fetchMetadataPageFiles.length} fetch-metadata page file(s), and ${cookieFiles.length} cookie file(s).`,
 		);
 	} finally {
 		await upstream.cleanup();
@@ -179,7 +179,7 @@ async function main() {
 
 main().catch((error) => {
 	console.error(
-		error instanceof Error ? error.stack || error.message : String(error)
+		error instanceof Error ? error.stack || error.message : String(error),
 	);
 	process.exit(1);
 });

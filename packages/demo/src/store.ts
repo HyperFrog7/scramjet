@@ -25,7 +25,7 @@ export const demoSettingsStore = createStore(
 		ident: "scramjet-demo-settings",
 		backing: "localstorage",
 		autosave: "auto",
-	}
+	},
 );
 
 export function normalizeWispUrl(value: string) {

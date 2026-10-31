@@ -22,7 +22,7 @@ export default [
 			await title.waitFor({ state: "visible", timeout: 30000 });
 
 			const thumbnail = frame.locator(
-				"#contents > ytd-video-renderer:nth-child(1) > #dismissible > ytd-thumbnail > a > yt-image > img"
+				"#contents > ytd-video-renderer:nth-child(1) > #dismissible > ytd-thumbnail > a > yt-image > img",
 			);
 			await thumbnail.waitFor({ state: "visible", timeout: 30000 });
 		},

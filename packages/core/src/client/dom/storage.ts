@@ -32,7 +32,7 @@ export default function (client: ScramjetClient, self: Self) {
 				case "key":
 					return (index: number) => {
 						const keys = Object_keys(target).filter((key) =>
-							key.startsWith(client.url.host)
+							key.startsWith(client.url.host),
 						);
 
 						return target.getItem(keys[index]);
@@ -40,7 +40,7 @@ export default function (client: ScramjetClient, self: Self) {
 
 				case "length":
 					return Object_keys(target).filter((key) =>
-						key.startsWith(client.url.host)
+						key.startsWith(client.url.host),
 					).length;
 
 				default:
@@ -66,7 +66,7 @@ export default function (client: ScramjetClient, self: Self) {
 			return Reflect_ownKeys(target)
 				.filter((f) => typeof f === "string" && f.startsWith(client.url.host))
 				.map((f) =>
-					typeof f === "string" ? f.substring(client.url.host.length + 1) : f
+					typeof f === "string" ? f.substring(client.url.host.length + 1) : f,
 				);
 		},
 
@@ -89,7 +89,7 @@ export default function (client: ScramjetClient, self: Self) {
 		defineProperty(target, property, attributes) {
 			target.setItem(
 				client.url.host + "@" + (property as string),
-				attributes.value
+				attributes.value,
 			);
 
 			return true;

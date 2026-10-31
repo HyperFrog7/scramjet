@@ -8,7 +8,7 @@ import {
 
 function bytesToBase64Fallback(bytes: Uint8Array): string {
 	const binString = Array_from(bytes, (byte) =>
-		String_fromCodePoint(byte)
+		String_fromCodePoint(byte),
 	).join("");
 
 	return btoa(binString);
@@ -28,8 +28,8 @@ export function base64Encode(text: string) {
 		TextEncoder_encode(text)
 			.reduce(
 				(data, byte) => (data.push(String_fromCharCode(byte)), data),
-				[] as any
+				[] as any,
 			)
-			.join("")
+			.join(""),
 	);
 }

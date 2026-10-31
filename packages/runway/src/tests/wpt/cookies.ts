@@ -328,7 +328,7 @@ function testNameForPath(relPath: string) {
 function serve(
 	response: ServerResponse,
 	body: string,
-	headers: Record<string, string> = {}
+	headers: Record<string, string> = {},
 ) {
 	response.writeHead(200, {
 		"Access-Control-Allow-Origin": "*",
@@ -347,7 +347,7 @@ function normalizeUnsafeSetCookie(cookie: string) {
 	if (equalsIndex === -1) {
 		const value = pair.replace(/[\0\n\r]/g, " ");
 		return [value, ...parts.map((part) => part.replace(/[\0\n\r]/g, " "))].join(
-			";"
+			";",
 		);
 	}
 
@@ -376,7 +376,7 @@ function writeRawResponse(
 	status: number,
 	headers: Record<string, string>,
 	setCookies: string[],
-	body: string
+	body: string,
 ) {
 	const socket = response.socket;
 	if (!socket) throw new Error("Response socket unavailable");
@@ -387,7 +387,7 @@ function writeRawResponse(
 		`HTTP/1.1 ${status} ${statusText}`,
 		...Object.entries(headers).map(([key, value]) => `${key}: ${value}`),
 		...setCookies.map(
-			(cookie) => `Set-Cookie: ${normalizeUnsafeSetCookie(cookie)}`
+			(cookie) => `Set-Cookie: ${normalizeUnsafeSetCookie(cookie)}`,
 		),
 		`Content-Length: ${bodyBuffer.byteLength}`,
 		"Connection: close",
@@ -406,7 +406,7 @@ function sendResponseWithCookies(
 	status: number,
 	body: string,
 	setCookies: string[],
-	extraHeaders: Record<string, string> = {}
+	extraHeaders: Record<string, string> = {},
 ) {
 	const headers = {
 		...cookieResponseHeaders(request),
@@ -446,7 +446,7 @@ function parseHeadersFile(source: string) {
 		if (index === -1) continue;
 		headers.set(
 			trimmed.slice(0, index).trim(),
-			trimmed.slice(index + 1).trim()
+			trimmed.slice(index + 1).trim(),
 		);
 	}
 	return headers;
@@ -460,7 +460,7 @@ function replaceTokens(
 		httpsPort: number;
 		sameSiteHost: string;
 		crossHost: string;
-	}
+	},
 ) {
 	return source
 		.replace(/\{\{host\}\}/g, props.host)
@@ -542,7 +542,7 @@ async function serveVendoredFile(
 		httpsPort: number;
 		sameSiteHost: string;
 		crossHost: string;
-	}
+	},
 ) {
 	const resolvedPath = vendoredPathForRequest(requestPath);
 	if (!resolvedPath) return false;
@@ -553,7 +553,7 @@ async function serveVendoredFile(
 	};
 	try {
 		const extraHeaders = parseHeadersFile(
-			await fs.readFile(headersPath, "utf8")
+			await fs.readFile(headersPath, "utf8"),
 		);
 		for (const [key, value] of extraHeaders) headers[key] = value;
 	} catch (error) {
@@ -601,7 +601,7 @@ async function ensureServer() {
 							requestHost === "127.0.0.1" ? "localhost" : "127.0.0.1";
 						const requestUrl = new URL(
 							request.url || "/",
-							`http://${hostHeader}`
+							`http://${hostHeader}`,
 						);
 
 						if (request.method === "OPTIONS") {
@@ -659,7 +659,7 @@ async function ensureServer() {
 									302,
 									'{"redirect": true}',
 									setCookies,
-									{ Location: requestUrl.searchParams.get("location") || "/" }
+									{ Location: requestUrl.searchParams.get("location") || "/" },
 								);
 								return;
 							}
@@ -668,7 +668,7 @@ async function ensureServer() {
 								response,
 								200,
 								'{"success": true}',
-								setCookies
+								setCookies,
 							);
 							return;
 						}
@@ -679,7 +679,7 @@ async function ensureServer() {
 								response,
 								200,
 								'{"success": true}',
-								[cookie]
+								[cookie],
 							);
 							return;
 						}
@@ -690,7 +690,7 @@ async function ensureServer() {
 								response,
 								200,
 								'{"success": true}',
-								[`${name}=; max-age=0; path=/`]
+								[`${name}=; max-age=0; path=/`],
 							);
 							return;
 						}
@@ -707,7 +707,7 @@ async function ensureServer() {
 								response,
 								200,
 								`{"success": true}`,
-								[cookie]
+								[cookie],
 							);
 							return;
 						}
@@ -744,7 +744,7 @@ async function ensureServer() {
 								} else {
 									await callback.fail(
 										parsed.message || "WPT reported failure",
-										parsed.details
+										parsed.details,
 									);
 								}
 								response.writeHead(204, { "Access-Control-Allow-Origin": "*" });
@@ -761,7 +761,7 @@ async function ensureServer() {
 						) {
 							const resolvedPath = path.resolve(
 								vendorRoot,
-								"cookies/resources/cookie-helper.sub.js"
+								"cookies/resources/cookie-helper.sub.js",
 							);
 							const source = await fs.readFile(resolvedPath, "utf8");
 							// Replace the entire resetSameSiteCookies function with a version
@@ -794,7 +794,7 @@ async function resetSameSiteCookies(origin, value) {
     assert_dom_cookie("samesite_none", value, true);
     assert_dom_cookie("samesite_unspecified", value, true);
   }
-}`
+}`,
 							);
 							serve(
 								response,
@@ -805,7 +805,7 @@ async function resetSameSiteCookies(origin, value) {
 									sameSiteHost,
 									crossHost,
 								}),
-								{ "Content-Type": "application/javascript; charset=utf-8" }
+								{ "Content-Type": "application/javascript; charset=utf-8" },
 							);
 							return;
 						}
@@ -836,7 +836,7 @@ async function resetSameSiteCookies(origin, value) {
 								response,
 								200,
 								'{"success":true}',
-								setCookies
+								setCookies,
 							);
 							return;
 						}
@@ -854,7 +854,7 @@ async function resetSameSiteCookies(origin, value) {
 								response,
 								200,
 								'{"success":true}',
-								setCookies
+								setCookies,
 							);
 							return;
 						}
@@ -871,7 +871,7 @@ async function resetSameSiteCookies(origin, value) {
 								response,
 								200,
 								'{"success":true}',
-								setCookies
+								setCookies,
 							);
 							return;
 						}
@@ -920,7 +920,7 @@ async function resetSameSiteCookies(origin, value) {
 								response,
 								200,
 								'{"success":true}',
-								setCookies
+								setCookies,
 							);
 							return;
 						}
@@ -932,7 +932,7 @@ async function resetSameSiteCookies(origin, value) {
 							const location = requestUrl.searchParams.get("location") || "/";
 							const status = parseInt(
 								requestUrl.searchParams.get("status") || "302",
-								10
+								10,
 							);
 							sendResponseWithCookies(request, response, status, "", [], {
 								Location: location,
@@ -977,7 +977,7 @@ window.addEventListener("message", function(e) {
 							if (cookies[name] === value) {
 								const PNG_1x1 = Buffer.from(
 									"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
-									"base64"
+									"base64",
 								);
 								response.writeHead(200, {
 									"Content-Type": "image/png",
@@ -1017,10 +1017,10 @@ window.addEventListener("message", function(e) {
 						response.end(
 							error instanceof Error
 								? error.stack || error.message
-								: String(error)
+								: String(error),
 						);
 					}
-				}
+				},
 			);
 			await new Promise<void>((resolve) => server.listen(0, resolve));
 			port = (server.address() as AddressInfo).port;
@@ -1048,7 +1048,7 @@ function cookiePageTest(entryPath: string): Test {
 			const url = new URL(basePath, "http://localhost");
 			url.searchParams.set(
 				"runway_report",
-				`http://localhost:${test.port}/__runway_report?token=${token}`
+				`http://localhost:${test.port}/__runway_report?token=${token}`,
 			);
 			test.path = `${url.pathname}${url.search}`;
 		},

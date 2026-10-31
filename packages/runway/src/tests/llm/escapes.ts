@@ -26,7 +26,7 @@ function scriptTextEscape(name: string, body: string) {
 }
 
 function createHtmlServer(
-	html: string
+	html: string,
 ): Promise<{ server: http.Server; port: number }> {
 	return new Promise((resolve) => {
 		const server = http.createServer((req, res) => {
@@ -120,7 +120,7 @@ export default [
 					.waitFor({ state: "attached", timeout: 10000 });
 				await page.evaluate(() => {
 					const iframe = document.querySelector(
-						"#testframe"
+						"#testframe",
 					) as HTMLIFrameElement | null;
 					if (!iframe?.contentWindow) {
 						throw new Error("testframe contentWindow unavailable");
@@ -158,27 +158,27 @@ export default [
 	scriptTextEscape("escapes-script-text", `script.text = "${PAYLOAD}";`),
 	scriptTextEscape(
 		"escapes-script-innertext",
-		`script.innerText = "${PAYLOAD}";`
+		`script.innerText = "${PAYLOAD}";`,
 	),
 	scriptTextEscape(
 		"escapes-script-append-string",
-		`script.append("${PAYLOAD}");`
+		`script.append("${PAYLOAD}");`,
 	),
 	scriptTextEscape(
 		"escapes-script-appendchild-textnode",
-		`script.appendChild(document.createTextNode("${PAYLOAD}"));`
+		`script.appendChild(document.createTextNode("${PAYLOAD}"));`,
 	),
 	scriptTextEscape(
 		"escapes-script-prepend-string",
-		`script.prepend("${PAYLOAD}");`
+		`script.prepend("${PAYLOAD}");`,
 	),
 	scriptTextEscape(
 		"escapes-script-replacechildren-string",
-		`script.replaceChildren("${PAYLOAD}");`
+		`script.replaceChildren("${PAYLOAD}");`,
 	),
 	scriptTextEscape(
 		"escapes-script-insertadjacenttext",
-		`script.insertAdjacentText("beforeend", "${PAYLOAD}");`
+		`script.insertAdjacentText("beforeend", "${PAYLOAD}");`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-data",
@@ -186,7 +186,7 @@ export default [
 			const text = document.createTextNode("");
 			script.appendChild(text);
 			text.data = "${PAYLOAD}";
-		`
+		`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-nodevalue",
@@ -194,7 +194,7 @@ export default [
 			const text = document.createTextNode("");
 			script.appendChild(text);
 			text.nodeValue = "${PAYLOAD}";
-		`
+		`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-textcontent",
@@ -202,7 +202,7 @@ export default [
 			const text = document.createTextNode("");
 			script.appendChild(text);
 			text.textContent = "${PAYLOAD}";
-		`
+		`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-appenddata",
@@ -210,7 +210,7 @@ export default [
 			const text = document.createTextNode("check");
 			script.appendChild(text);
 			text.appendData("global(top);pass()");
-		`
+		`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-insertdata",
@@ -218,7 +218,7 @@ export default [
 			const text = document.createTextNode("check(top);pass()");
 			script.appendChild(text);
 			text.insertData(5, "global");
-		`
+		`,
 	),
 	scriptTextEscape(
 		"escapes-script-textnode-replacedata",
@@ -226,7 +226,7 @@ export default [
 			const text = document.createTextNode("checkbogus(top);pass()");
 			script.appendChild(text);
 			text.replaceData(5, 5, "global");
-		`
+		`,
 	),
 	escapeTest({
 		name: "escapes-setattributenode-onclick",
@@ -349,7 +349,7 @@ export default [
 				if (req.url === "/payload.xhtml") {
 					res.writeHead(200, { "Content-Type": "application/xhtml+xml" });
 					res.end(
-						'<?xml version="1.0"?><html xmlns="http://www.w3.org/1999/xhtml"><body><img src="x:" onerror="checkglobal(top)"/></body></html>'
+						'<?xml version="1.0"?><html xmlns="http://www.w3.org/1999/xhtml"><body><img src="x:" onerror="checkglobal(top)"/></body></html>',
 					);
 				}
 			});
@@ -397,7 +397,7 @@ export default [
 				if (req.url === "/payload.xhtml") {
 					res.writeHead(200, { "Content-Type": "application/xhtml+xml" });
 					res.end(
-						'<?xml version="1.0"?><html xmlns="http://www.w3.org/1999/xhtml"><body><img src="x:" onerror="checkglobal(top)"/></body></html>'
+						'<?xml version="1.0"?><html xmlns="http://www.w3.org/1999/xhtml"><body><img src="x:" onerror="checkglobal(top)"/></body></html>',
 					);
 				}
 			});

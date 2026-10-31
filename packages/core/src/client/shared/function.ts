@@ -3,7 +3,7 @@ import { ScramjetClient, ProxyCtx, Proxy } from "@client/index";
 
 function rewriteFunction<T extends string, U extends "construct" | "apply">(
 	ctx: ProxyCtx<T, U>,
-	client: ScramjetClient
+	client: ScramjetClient,
 ) {
 	const stringifiedFunction = ctx.call().toString();
 
@@ -14,7 +14,7 @@ function rewriteFunction<T extends string, U extends "construct" | "apply">(
 		`return ${stringifiedFunction}`,
 		"(function proxy)",
 		client.context,
-		client.meta
+		client.meta,
 	);
 	ctx.return(ctx.fn(content)());
 }
@@ -34,22 +34,22 @@ export default function (client: ScramjetClient, _self: Self) {
 	const RawFunction = client.natives.call(
 		"eval",
 		null,
-		"(function () {})"
+		"(function () {})",
 	).constructor;
 	const RawAsyncFunction = client.natives.call(
 		"eval",
 		null,
-		"(async function () {})"
+		"(async function () {})",
 	).constructor;
 	const RawGeneratorFunction = client.natives.call(
 		"eval",
 		null,
-		"(function* () {})"
+		"(function* () {})",
 	).constructor;
 	const RawAsyncGeneratorFunction = client.natives.call(
 		"eval",
 		null,
-		"(async function* () {})"
+		"(async function* () {})",
 	).constructor;
 
 	client.RawProxy(RawFunction.prototype, "constructor", handler);

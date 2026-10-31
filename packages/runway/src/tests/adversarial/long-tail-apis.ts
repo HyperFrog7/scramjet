@@ -24,77 +24,77 @@ export default [
 	// Navigator protocol-handler methods are explicitly intercepted as no-ops.
 	probe(
 		"protocol-register-missing-arguments",
-		`(() => navigator.registerProtocolHandler())()`
+		`(() => navigator.registerProtocolHandler())()`,
 	),
 	probe(
 		"protocol-register-forbidden-scheme",
-		`(() => navigator.registerProtocolHandler("http", location.origin + "/open?url=%s"))()`
+		`(() => navigator.registerProtocolHandler("http", location.origin + "/open?url=%s"))()`,
 	),
 	probe(
 		"protocol-register-invalid-scheme",
-		`(() => navigator.registerProtocolHandler("not a scheme", location.origin + "/open?url=%s"))()`
+		`(() => navigator.registerProtocolHandler("not a scheme", location.origin + "/open?url=%s"))()`,
 	),
 	probe(
 		"protocol-register-missing-placeholder",
-		`(() => navigator.registerProtocolHandler("web+runway", location.origin + "/open"))()`
+		`(() => navigator.registerProtocolHandler("web+runway", location.origin + "/open"))()`,
 	),
 	probe(
 		"protocol-register-cross-origin-template",
-		`(() => navigator.registerProtocolHandler("web+runway", "https://example.com/open?url=%s"))()`
+		`(() => navigator.registerProtocolHandler("web+runway", "https://example.com/open?url=%s"))()`,
 	),
 	probe(
 		"protocol-unregister-missing-arguments",
-		`(() => navigator.unregisterProtocolHandler())()`
+		`(() => navigator.unregisterProtocolHandler())()`,
 	),
 	probe(
 		"protocol-unregister-invalid-scheme",
-		`(() => navigator.unregisterProtocolHandler("not a scheme", location.origin + "/open?url=%s"))()`
+		`(() => navigator.unregisterProtocolHandler("not a scheme", location.origin + "/open?url=%s"))()`,
 	),
 
 	// PerformanceEntry.name and all entry-list methods are intercepted.
 	probe(
 		"performance-resource-tojson-name",
-		`(() => performance.getEntriesByType("resource").find((e) => e.name.endsWith("/script.js")).toJSON().name)()`
+		`(() => performance.getEntriesByType("resource").find((e) => e.name.endsWith("/script.js")).toJSON().name)()`,
 	),
 	probe(
 		"performance-navigation-tojson-name",
-		`(() => performance.getEntriesByType("navigation")[0].toJSON().name)()`
+		`(() => performance.getEntriesByType("navigation")[0].toJSON().name)()`,
 	),
 	probe(
 		"performance-getentriesbyname-author-url",
-		`(() => performance.getEntriesByName(location.origin + "/script.js").length)()`
+		`(() => performance.getEntriesByName(location.origin + "/script.js").length)()`,
 	),
 	probe(
 		"performance-user-mark-masked-name",
-		`(() => { performance.mark("inject.js"); const count = performance.getEntriesByType("mark").filter((e) => e.name === "inject.js").length; performance.clearMarks("inject.js"); return count; })()`
+		`(() => { performance.mark("inject.js"); const count = performance.getEntriesByType("mark").filter((e) => e.name === "inject.js").length; performance.clearMarks("inject.js"); return count; })()`,
 	),
 
 	// document.domain is a deprecated but still-intercepted Document surface.
 	probe(
 		"document-domain-invalid-setter",
-		`(() => { document.domain = "example.com"; return document.domain; })()`
+		`(() => { document.domain = "example.com"; return document.domain; })()`,
 	),
 	probe(
 		"document-domain-getter-brand",
-		`(() => Object.getOwnPropertyDescriptor(Document.prototype, "domain").get.call({}))()`
+		`(() => Object.getOwnPropertyDescriptor(Document.prototype, "domain").get.call({}))()`,
 	),
 	probe(
 		"document-domain-setter-brand",
-		`(() => Object.getOwnPropertyDescriptor(Document.prototype, "domain").set.call({}, "localhost"))()`
+		`(() => Object.getOwnPropertyDescriptor(Document.prototype, "domain").set.call({}, "localhost"))()`,
 	),
 
 	// CSS Typed OM parse() is intercepted even though the rest of Typed OM is not.
 	probe(
 		"typed-om-background-image-readback",
-		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("background-image", "url(/a.png)").toString())()`
+		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("background-image", "url(/a.png)").toString())()`,
 	),
 	probe(
 		"typed-om-background-shorthand-readback",
-		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("background", "url(/a.png) center").toString())()`
+		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("background", "url(/a.png) center").toString())()`,
 	),
 	probe(
 		"typed-om-custom-property-readback",
-		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("--asset", "url(/a.png)").toString())()`
+		`(() => typeof CSSStyleValue === "undefined" ? "unsupported" : CSSStyleValue.parse("--asset", "url(/a.png)").toString())()`,
 	),
 
 	// getSVGDocument() and embedded contentDocument/contentWindow are intercepted.
@@ -112,7 +112,7 @@ export default [
 			object.remove();
 			URL.revokeObjectURL(url);
 			return value;
-		})()`
+		})()`,
 	),
 	probe(
 		"svgdocument-embed-blob",
@@ -128,7 +128,7 @@ export default [
 			embed.remove();
 			URL.revokeObjectURL(url);
 			return value;
-		})()`
+		})()`,
 	),
 	// The new HTML serialization APIs have dedicated interceptors.
 	probe(
@@ -138,7 +138,7 @@ export default [
 			const host = document.createElement("div");
 			host.attachShadow({mode:"open", serializable:true}).innerHTML = "<span></span>";
 			return host.getHTML({serializableShadowRoots:true});
-		})()`
+		})()`,
 	),
 	probe(
 		"parsehtmlunsafe-secondary-document-url",
@@ -146,6 +146,6 @@ export default [
 			if (!Document.parseHTMLUnsafe) return "unsupported";
 			const parsed = Document.parseHTMLUnsafe("<p>x</p>");
 			return [parsed.URL, parsed.documentURI, parsed.baseURI];
-		})()`
+		})()`,
 	),
 ];

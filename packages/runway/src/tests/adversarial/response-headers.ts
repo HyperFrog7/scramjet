@@ -157,7 +157,7 @@ export default [
 					});
 					res.end(
 						'<!DOCTYPE html><html><body><h1>csp</h1><script src="/cspscript.js"></' +
-							"script></body></html>"
+							"script></body></html>",
 					);
 					return;
 				}

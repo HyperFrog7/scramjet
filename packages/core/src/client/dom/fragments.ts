@@ -6,7 +6,7 @@ import { String } from "@/shared/snapshot";
 // TODO: this function is untested / llm slop
 function foreignContextForRange(
 	client: ScramjetClient,
-	range: Range
+	range: Range,
 ): ForeignContext {
 	const node = range.startContainer;
 	const element = node.nodeType === 1 ? node : node.parentElement;

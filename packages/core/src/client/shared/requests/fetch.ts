@@ -25,7 +25,7 @@ export default function (client: ScramjetClient) {
 			const url = String(ctx.args[0]);
 			ctx.args[0] = client.rewriteUrl(
 				url,
-				rewriteUrlOptionsForFetch(ctx.args[1] as RequestInit | undefined)
+				rewriteUrlOptionsForFetch(ctx.args[1] as RequestInit | undefined),
 			);
 		},
 	});
@@ -36,7 +36,7 @@ export default function (client: ScramjetClient) {
 			const url = String(ctx.args[0]);
 			ctx.args[0] = client.rewriteUrl(
 				url,
-				rewriteUrlOptionsForFetch(ctx.args[1] as RequestInit | undefined)
+				rewriteUrlOptionsForFetch(ctx.args[1] as RequestInit | undefined),
 			);
 		},
 	});

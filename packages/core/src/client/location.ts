@@ -33,7 +33,7 @@ export function createLocationProxy(client: ScramjetClient, self: GlobalThis) {
 			"Object.getOwnPropertyDescriptor",
 			null,
 			descriptorSource,
-			prop
+			prop,
 		);
 		if (!native) continue;
 
@@ -66,7 +66,7 @@ export function createLocationProxy(client: ScramjetClient, self: GlobalThis) {
 							},
 							{
 								url: client.url.href,
-							}
+							},
 						);
 
 						return;
@@ -105,7 +105,7 @@ export function createLocationProxy(client: ScramjetClient, self: GlobalThis) {
 					},
 					{
 						url: client.url.href,
-					}
+					},
 				);
 			},
 		});
@@ -128,7 +128,7 @@ export function createLocationProxy(client: ScramjetClient, self: GlobalThis) {
 					},
 					{
 						url: client.url.href,
-					}
+					},
 				);
 			},
 		});

@@ -80,7 +80,7 @@ function parseString(setCookieValue: string): ParsedCookie | null {
 }
 
 function parseNameValuePair(
-	nameValuePairStr: string
+	nameValuePairStr: string,
 ): { name: string; value: string } | null {
 	let name = "";
 	let value = "";

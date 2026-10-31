@@ -236,7 +236,7 @@ function isAllowedPoisonSink(
 	node,
 	contextParamNames,
 	snapshotStringNames,
-	isMapLikeObject
+	isMapLikeObject,
 ) {
 	const candidate = getTSExpressionContainer(node);
 	const parent = candidate.parent;
@@ -377,7 +377,7 @@ const poisonedCtxPlugin = {
 					}
 				}
 				const contextParamNames = new Set(
-					context.options[0]?.contextParamNames ?? ["ctx"]
+					context.options[0]?.contextParamNames ?? ["ctx"],
 				);
 				const reported = new WeakSet();
 
@@ -565,7 +565,7 @@ const poisonedCtxPlugin = {
 								node,
 								contextParamNames,
 								snapshotStringNames,
-								exprIsMapLikeObject
+								exprIsMapLikeObject,
 							)
 						) {
 							return;

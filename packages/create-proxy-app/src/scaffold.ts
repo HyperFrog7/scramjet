@@ -10,7 +10,7 @@ interface options {
 
 const packageRoot = path.join(
 	path.dirname(fileURLToPath(import.meta.url)),
-	".."
+	"..",
 );
 
 function localTemplateDir(template: string) {
@@ -34,7 +34,7 @@ async function template(template: string, projectName: string) {
 					provider: "github",
 					cwd: projectName,
 					dir: ".",
-				}
+				},
 			);
 		}
 	} catch (err: any) {
@@ -50,7 +50,7 @@ async function template(template: string, projectName: string) {
 		}
 		if (err.message.includes("404")) {
 			throw new Error(
-				"It looks like we were not able to get the template. \n Please try again later"
+				"It looks like we were not able to get the template. \n Please try again later",
 			);
 		} else {
 			throw new Error(err.message);
@@ -59,7 +59,7 @@ async function template(template: string, projectName: string) {
 	//doublecheck the folder to make sure it's not empty
 	if (fs.readdirSync(projectName).length === 0) {
 		throw new Error(
-			"It looks like the folder is empty. \n Please try again later"
+			"It looks like the folder is empty. \n Please try again later",
 		);
 	}
 }

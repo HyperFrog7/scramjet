@@ -173,7 +173,7 @@ export default [
 					"<!DOCTYPE html><html><body><script>" +
 						"opener.postMessage({from:'popup',href:location.href,hasOpener:!!window.opener},'*');" +
 						"</" +
-						"script></body></html>"
+						"script></body></html>",
 				);
 			});
 		},
