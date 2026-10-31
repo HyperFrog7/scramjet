@@ -10,7 +10,15 @@ import type { ViteDevServer } from "vite";
 export function black() {
 	return chalk.bgHex("000001");
 }
-export async function printBanner(image: Buffer, lines: string[]) {
+
+export function stripAnsi(s: string) {
+	return s.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+export async function renderBanner(
+	image: Buffer,
+	lines: string[],
+): Promise<string> {
 	const imageWidth = 10;
 	const totalWidth = 60;
 	const { ansi: rawAnsi } = await imageToAnsi(image.buffer, {
@@ -35,10 +43,6 @@ export async function printBanner(image: Buffer, lines: string[]) {
 		optimize: 5,
 		work: 5,
 	});
-
-	function stripAnsi(s: string) {
-		return s.replace(/\x1b\[[0-9;]*m/g, "");
-	}
 
 	const ansiLines = rawAnsi.split(/\r?\n/).filter((l) => l.length > 0);
 	const contentWidth = ansiLines.reduce((max, line) => {
@@ -78,7 +82,7 @@ export async function printBanner(image: Buffer, lines: string[]) {
 						contentWidth -
 						PAD_LEFT -
 						textpad -
-						stripAnsi(text).length
+						stripAnsi(text).length,
 				);
 		} else {
 			out +=
@@ -88,8 +92,12 @@ export async function printBanner(image: Buffer, lines: string[]) {
 	}
 	out += (blackSpaces(totalWidth) + "\n").repeat(PAD_BOTTOM);
 
+	return out;
+}
+
+export async function printBanner(image: Buffer, lines: string[]) {
 	stdout.write("\x1b[2J\x1b[H");
-	stdout.write(out);
+	stdout.write(await renderBanner(image, lines));
 }
 
 let successCount = 0;
@@ -112,10 +120,27 @@ export function logSuccess() {
 	lastSuccessCollapsed = true;
 }
 
-export function runRspack(rspackConfig: RspackOptions | RspackOptions[]) {
+export type BuildResult = {
+	ok: boolean;
+	successCount: number;
+	text?: string;
+};
+
+export type RspackHooks = {
+	onBuild?: (result: BuildResult) => void;
+};
+
+export function runRspack(
+	rspackConfig: RspackOptions | RspackOptions[],
+	hooks: RspackHooks = {},
+) {
 	const compiler = rspack(rspackConfig);
-	compiler.watch({}, (err, stats) => {
+	const watching = compiler.watch({}, (err, stats) => {
 		if (err) {
+			if (hooks.onBuild) {
+				hooks.onBuild({ ok: false, successCount: 0, text: err.message });
+				return;
+			}
 			resetSuccessLog();
 			stdout.write(chalk.red("Build failed:\n"));
 			stdout.write(err.message + "\n");
@@ -129,14 +154,37 @@ export function runRspack(rspackConfig: RspackOptions | RspackOptions[]) {
 
 		for (const stat of statList) {
 			const text = stat.toString({ colors: false, modules: false });
-			if (text.includes("compiled successfully")) {
+			const failed =
+				typeof stat.hasErrors === "function"
+					? stat.hasErrors()
+					: !text.includes("compiled successfully");
+
+			if (!failed) {
+				if (hooks.onBuild) {
+					successCount += 1;
+					hooks.onBuild({ ok: true, successCount, text });
+					continue;
+				}
 				logSuccess();
-			} else {
-				resetSuccessLog();
-				console.log(text);
+				continue;
 			}
+
+			if (hooks.onBuild) {
+				resetSuccessLog();
+				hooks.onBuild({ ok: false, successCount: 0, text });
+				continue;
+			}
+			resetSuccessLog();
+			console.log(text);
 		}
 	});
+
+	return {
+		close: () =>
+			new Promise<void>((resolve) => {
+				watching.close(() => resolve());
+			}),
+	};
 }
 
 export function normalizeWebsocketUrl(url: string): string {
@@ -147,7 +195,7 @@ export function warnOnUrlEscape(server: ViteDevServer) {
 	const handle = (
 		req: { url?: string; method?: string },
 		_res: unknown,
-		next: (err?: unknown) => void
+		next: (err?: unknown) => void,
 	) => {
 		const pathname = (req.url ?? "").split("?")[0] ?? "";
 		if (pathname.startsWith("/~/sj") && !pathname.endsWith(".map")) {
