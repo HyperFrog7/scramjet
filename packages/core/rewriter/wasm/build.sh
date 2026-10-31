@@ -34,7 +34,11 @@ if ! [[ "$(wasm-bindgen -V)" =~ ^"$WBG" ]]; then
 fi
 
 (
-	export RUSTFLAGS='-Zlocation-detail=none -Zfmt-debug=none'
+	# rustc enables the reference-types proposal for wasm32 by default, and the
+	# block types it then emits can't be decoded by wasm-snip's parser
+	# ("failed to parse code section: found type anyref"). nothing here needs
+	# externref, so keep the module on MVP types to stay snippable.
+	export RUSTFLAGS='-Zlocation-detail=none -Zfmt-debug=none -C target-feature=-reference-types'
 	if [ "${OPTIMIZE_FOR_SIZE:-0}" = "1" ]; then
 		export RUSTFLAGS="${RUSTFLAGS} -C opt-level=z"
 	fi
