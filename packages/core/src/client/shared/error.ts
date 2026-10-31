@@ -16,8 +16,8 @@ export default function (client: ScramjetClient, _self: Self) {
 				if (client.config.maskedfiles.some((f) => url.endsWith(f))) {
 					// strip stack frames including scramjet handlers from the trace
 					const lines = newstack.split("\n");
-					const line = lines.find((l) => l.includes(url));
-					lines.splice(line, 1);
+					const frameIndex = lines.findIndex((l) => l.includes(url));
+					if (frameIndex !== -1) lines.splice(frameIndex, 1);
 					newstack = lines.join("\n");
 					continue;
 				}

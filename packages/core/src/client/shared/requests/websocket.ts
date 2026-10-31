@@ -7,11 +7,14 @@ import {
 	_WeakMap,
 } from "@/shared/snapshot";
 
+// WebSocketStream is not in lib.dom yet; it is only used as a weak-map key here
+type WebSocketStream = object;
+
 type FakeWebSocketState = {
 	protocol: string;
 	extensions: string;
 	url: string;
-	binaryType: string;
+	binaryType: BinaryType;
 	barews: BareCompatibleWebSocket;
 
 	onopen: (ev: Event) => any | null;
@@ -32,9 +35,12 @@ type FakeWebSocketStreamState = {
 };
 export default function (client: ScramjetClient, self: GlobalThis) {
 	const socketmap: WeakMap<WebSocket, FakeWebSocketState> =
-		new _WeakMap() as WeakMap<WebSocket, FakeWebSocketState>;
+		new (_WeakMap as any)() as WeakMap<WebSocket, FakeWebSocketState>;
 	const socketstreammap: WeakMap<WebSocketStream, FakeWebSocketStreamState> =
-		new _WeakMap() as WeakMap<WebSocketStream, FakeWebSocketStreamState>;
+		new (_WeakMap as any)() as WeakMap<
+			WebSocketStream,
+			FakeWebSocketStreamState
+		>;
 	client.Proxy("WebSocket", {
 		construct(ctx) {
 			const fakeWebSocket = new EventTarget() as WebSocket;
@@ -45,11 +51,11 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			let rawurl = new _URL(ctx.args[0], client.url.href);
 			if (rawurl.protocol === "http:") {
 				rawurl = new _URL(
-					"ws:" + rawurl.href.substring(rawurl.protocol.length)
+					"ws:" + rawurl.href.substring(rawurl.protocol.length),
 				);
 			} else if (rawurl.protocol === "https:") {
 				rawurl = new _URL(
-					"wss:" + rawurl.href.substring(rawurl.protocol.length)
+					"wss:" + rawurl.href.substring(rawurl.protocol.length),
 				);
 			}
 			const url = rawurl.href;
@@ -137,7 +143,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 
 			return ws.binaryType;
 		},
-		set(ctx, v: string) {
+		set(ctx, v: BinaryType) {
 			const ws = socketmap.get(ctx.this);
 			if (!ws) return ctx.set(v);
 			if (v === "blob" || v === "arraybuffer") ws.binaryType = v;
@@ -254,7 +260,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			const ws = socketmap.get(ctx.this);
 			if (!ws) return;
 
-			ctx.return(ws.barews.send(ctx.args[0]));
+			ctx.return(ws.barews.send(ctx.args[0] as any) as unknown as void);
 		},
 	});
 
@@ -275,17 +281,21 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			Object_setPrototypeOf(fakeWebSocket, ctx.fn.prototype);
 			fakeWebSocket.constructor = ctx.fn;
 
-			const barews = client.bare.createWebSocket(ctx.args[0], ctx.args[1], [
-				["User-Agent", self.navigator.userAgent],
-				["Origin", client.url.origin],
-			]);
-			ctx.args[1]?.signal.addEventListener("abort", () => {
+			const barews = client.bare.createWebSocket(
+				ctx.args[0] as string,
+				ctx.args[1] as any,
+				[
+					["User-Agent", self.navigator.userAgent],
+					["Origin", client.url.origin],
+				],
+			);
+			(ctx.args[1] as any)?.signal?.addEventListener("abort", () => {
 				barews.close(1000, "");
 			});
 			const state: FakeWebSocketStreamState = {
 				protocol: "",
 				extensions: "",
-				url: ctx.args[0],
+				url: ctx.args[0] as string,
 				barews,
 
 				opened: new Promise((resolve, reject) => {
@@ -306,7 +316,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 						resolve({ closeCode: ev.code, reason: ev.reason });
 					});
 				}),
-				readable: new ReadableStream({
+				readable: new ReadableStream<any>({
 					start(controller) {
 						barews.addEventListener("message", async (ev: MessageEvent) => {
 							let payload = ev.data;
@@ -329,27 +339,27 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 						barews.close(info?.closeCode ?? 1000, info?.reason ?? "");
 					},
 				}),
-				writable: new WritableStream({
+				writable: new WritableStream<any>({
 					write(chunk) {
 						barews.send(chunk);
 					},
 					abort() {
 						barews.close(1000, "");
 					},
-					close(info) {
-						barews.close(info?.closeCode ?? 1000, info?.reason ?? "");
+					close() {
+						barews.close(1000, "");
 					},
 				}),
 			};
 
-			socketstreammap.set(fakeWebSocket, state);
+			socketstreammap.set(fakeWebSocket as object, state);
 			ctx.return(fakeWebSocket);
 		},
 	});
 
 	client.Trap("WebSocketStream.prototype.opened", {
 		get(ctx) {
-			const ws = socketstreammap.get(ctx.this);
+			const ws = socketstreammap.get(ctx.this as object);
 
 			return ws.opened;
 		},
@@ -357,7 +367,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 
 	client.Trap("WebSocketStream.prototype.closed", {
 		get(ctx) {
-			const ws = socketstreammap.get(ctx.this);
+			const ws = socketstreammap.get(ctx.this as object);
 
 			return ws.closed;
 		},
@@ -365,7 +375,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 
 	client.Trap("WebSocketStream.prototype.url", {
 		get(ctx) {
-			const ws = socketstreammap.get(ctx.this);
+			const ws = socketstreammap.get(ctx.this as object);
 
 			return ws.url;
 		},
@@ -373,14 +383,15 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 
 	client.Proxy("WebSocketStream.prototype.close", {
 		apply(ctx) {
-			const ws = socketstreammap.get(ctx.this);
-			if (ctx.args[0]) {
-				if (ctx.args[0].closeCode === undefined) ctx.args[0].closeCode = 1000;
-				if (ctx.args[0].reason === undefined) ctx.args[0].reason = "";
+			const ws = socketstreammap.get(ctx.this as object);
+			const options = ctx.args[0] as
+				| { closeCode?: number; reason?: string }
+				| undefined;
+			if (options) {
+				if (options.closeCode === undefined) options.closeCode = 1000;
+				if (options.reason === undefined) options.reason = "";
 
-				return ctx.return(
-					ws.barews.close(ctx.args[0].closeCode, ctx.args[0].reason)
-				);
+				return ctx.return(ws.barews.close(options.closeCode, options.reason));
 			}
 
 			return ctx.return(ws.barews.close(1000, ""));

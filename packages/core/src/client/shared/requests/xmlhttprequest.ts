@@ -1,4 +1,4 @@
-import { getFlag, ScramjetContext } from "@/shared";
+import { ScramjetContext } from "@/shared";
 import { rewriteUrl, unrewriteUrl, URLMeta } from "@rewriters/url";
 import { ScramjetClient } from "@client/index";
 
@@ -30,7 +30,7 @@ export default function (client: ScramjetClient, self: Self) {
 			const args = ctx.this[ARGS];
 			if (!args || args[2]) return;
 
-			if (!client.getFlag("syncxhr")) {
+			if (!client.flagEnabled("syncxhr")) {
 				console.warn("ignoring request - sync xhr disabled in flags");
 
 				return ctx.return(undefined);
@@ -70,8 +70,8 @@ export default function (client: ScramjetClient, self: Self) {
 			const bodyab = new Uint8Array(bodyLength);
 			bodyab.set(
 				new Uint8Array(
-					sab.slice(11 + headersLength, 11 + headersLength + bodyLength)
-				)
+					sab.slice(11 + headersLength, 11 + headersLength + bodyLength),
+				),
 			);
 			const body = new TextDecoder().decode(bodyab);
 
@@ -136,7 +136,7 @@ export default function (client: ScramjetClient, self: Self) {
 				if (header.toLowerCase().startsWith("link:")) {
 					headers[i] = `Link: ${unrewriteLinkHeader(
 						header.slice(5).trim(),
-						client.context
+						client.context,
 					)}`;
 				}
 			}
@@ -158,6 +158,6 @@ export default function (client: ScramjetClient, self: Self) {
 export function unrewriteLinkHeader(header: string, context: ScramjetContext) {
 	return header.replace(
 		/<([^>]+)>/gi,
-		(_match, p1) => `<${unrewriteUrl(p1, context)}>`
+		(_match, p1) => `<${unrewriteUrl(p1, context)}>`,
 	);
 }

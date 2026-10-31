@@ -23,7 +23,7 @@ import { ForeignContext } from "@/shared/rewriters/html";
 
 export function foreignContextForElement(
 	client: ScramjetClient,
-	element: Element
+	element: Element,
 ): ForeignContext {
 	if (client.box.instanceof(element, "SVGElement")) return "svg";
 	if (client.box.instanceof(element, "MathMLElement")) return "math";
@@ -33,7 +33,7 @@ export function foreignContextForElement(
 // NOTE: NOT INCLUSIVE OF THE CURRENT ELEMENT
 export function insideForeignContext(
 	client: ScramjetClient,
-	element: Element | null
+	element: Element | null,
 ): ForeignContext {
 	let current: Element | null = element.parentElement;
 
@@ -51,30 +51,30 @@ export function insideForeignContext(
 
 function scriptBlockTypeForElement(
 	client: ScramjetClient,
-	element: Element
+	element: Element,
 ): string {
 	const hasType = client.natives.call(
 		"Element.prototype.hasAttribute",
 		element,
-		"type"
+		"type",
 	) as boolean;
 	const hasLanguage = client.natives.call(
 		"Element.prototype.hasAttribute",
 		element,
-		"language"
+		"language",
 	) as boolean;
 	const type = hasType
 		? (client.natives.call(
 				"Element.prototype.getAttribute",
 				element,
-				"type"
+				"type",
 			) as string | null)
 		: null;
 	const language = hasLanguage
 		? (client.natives.call(
 				"Element.prototype.getAttribute",
 				element,
-				"language"
+				"language",
 			) as string | null)
 		: null;
 	return getScriptBlockTypeString(type, language, hasType, hasLanguage);
@@ -85,7 +85,7 @@ function collectAttributeMap(
 	client: ScramjetClient,
 	element: Element,
 	overrideName: string,
-	overrideValue: unknown
+	overrideValue: unknown,
 ) {
 	const attrs: Record<string, string | undefined> = {};
 	const attrNames =
@@ -96,7 +96,7 @@ function collectAttributeMap(
 		const value = client.natives.call(
 			"Element.prototype.getAttribute",
 			element,
-			attrName
+			attrName,
 		);
 		attrs[String(attrName).toLowerCase()] =
 			typeof value === "string" ? value : undefined;
@@ -139,13 +139,13 @@ export default function (client: ScramjetClient, self: typeof window) {
 			"Object.getOwnPropertyDescriptor",
 			null,
 			self.HTMLAnchorElement.prototype,
-			"href"
+			"href",
 		),
 		client.natives.call(
 			"Object.getOwnPropertyDescriptor",
 			null,
 			self.HTMLAreaElement.prototype,
-			"href"
+			"href",
 		),
 	];
 
@@ -157,7 +157,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 				"Object.getOwnPropertyDescriptor",
 				null,
 				element.prototype,
-				attr
+				attr,
 			);
 			Object_defineProperty(element.prototype, attr, {
 				get() {
@@ -251,7 +251,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 				client.natives.call(
 					"Element.prototype.hasAttribute",
 					ctx.this,
-					`scramjet-attr-${name}`
+					`scramjet-attr-${name}`,
 				)
 			) {
 				const attrib = ctx.fn.call(ctx.this, `scramjet-attr-${name}`);
@@ -266,7 +266,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 		apply(ctx) {
 			const attrNames = ctx.call() as string[];
 			const cleaned = attrNames.filter(
-				(attr) => !attr.startsWith("scramjet-attr")
+				(attr) => !attr.startsWith("scramjet-attr"),
 			);
 
 			ctx.return(cleaned);
@@ -309,13 +309,13 @@ export default function (client: ScramjetClient, self: typeof window) {
 					value,
 					client.context,
 					client.meta,
-					collectAttributeMap(client, ctx.this, name, value)
+					collectAttributeMap(client, ctx.this, name, value),
 				);
 				if (ret == null) {
 					client.natives.call(
 						"Element.prototype.removeAttribute",
 						ctx.this,
-						name
+						name,
 					);
 					ctx.fn.call(ctx.this, `scramjet-attr-${name}`, value);
 					ctx.return(undefined);
@@ -353,13 +353,13 @@ export default function (client: ScramjetClient, self: typeof window) {
 					value,
 					client.context,
 					client.meta,
-					collectAttributeMap(client, ctx.this, name, value)
+					collectAttributeMap(client, ctx.this, name, value),
 				);
 				client.natives.call(
 					"Element.prototype.setAttribute",
 					ctx.this,
 					`scramjet-attr-${ctx.args[1]}`,
-					value
+					value,
 				);
 			}
 		},
@@ -419,7 +419,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 			let newval;
 			const scriptBlockType = client.box.instanceof(
 				ctx.this,
-				"HTMLScriptElement"
+				"HTMLScriptElement",
 			)
 				? scriptBlockTypeForElement(client, ctx.this)
 				: null;
@@ -432,13 +432,13 @@ export default function (client: ScramjetClient, self: typeof window) {
 					"(anonymous script element)",
 					client.context,
 					client.meta,
-					isModuleScriptType(scriptBlockType)
+					isModuleScriptType(scriptBlockType),
 				);
 				client.natives.call(
 					"Element.prototype.setAttribute",
 					ctx.this,
 					"scramjet-attr-script-source-src",
-					bytesToBase64(TextEncoder_encode(newval))
+					bytesToBase64(TextEncoder_encode(newval)),
 				);
 			} else if (client.box.instanceof(ctx.this, "HTMLStyleElement")) {
 				newval = rewriteCss(html, client.context, client.meta);
@@ -463,7 +463,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 				const scriptSource = client.natives.call(
 					"Element.prototype.getAttribute",
 					ctx.this,
-					"scramjet-attr-script-source-src"
+					"scramjet-attr-script-source-src",
 				);
 
 				if (scriptSource) {
@@ -478,7 +478,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 
 			return unrewriteHtml(
 				ctx.get(),
-				foreignContextForElement(client, ctx.this)
+				foreignContextForElement(client, ctx.this),
 			);
 		},
 	});
@@ -497,13 +497,13 @@ export default function (client: ScramjetClient, self: typeof window) {
 				"(anonymous script element)",
 				client.context,
 				client.meta,
-				isModuleScriptType(scriptBlockType)
+				isModuleScriptType(scriptBlockType),
 			) as string;
 			client.natives.call(
 				"Element.prototype.setAttribute",
 				element,
 				"scramjet-attr-script-source-src",
-				bytesToBase64(TextEncoder_encode(value))
+				bytesToBase64(TextEncoder_encode(value)),
 			);
 
 			return newval;
@@ -518,7 +518,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 			const scriptSource = client.natives.call(
 				"Element.prototype.getAttribute",
 				element,
-				"scramjet-attr-script-source-src"
+				"scramjet-attr-script-source-src",
 			);
 			if (scriptSource) return atob(scriptSource);
 			return text;
@@ -539,7 +539,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 			get(ctx) {
 				return getTextForElement(ctx.this, ctx.get());
 			},
-		}
+		},
 	);
 	client.Trap(
 		[
@@ -554,7 +554,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 			get(ctx) {
 				return getTextForElement(ctx.this, ctx.get());
 			},
-		}
+		},
 	);
 
 	client.Trap("Element.prototype.outerHTML", {
@@ -567,7 +567,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 					source: client.url.href,
 					apisource: "set Element.prototype.outerHTML",
 					foreignContext: insideForeignContext(client, ctx.this),
-				})
+				}),
 			);
 		},
 		get(ctx) {
@@ -650,10 +650,10 @@ export default function (client: ScramjetClient, self: typeof window) {
 	client.Proxy("Text.prototype.appendData", {
 		apply(ctx) {
 			const text = String(ctx.args[0]);
-			const parent = client.natives.call(
+			const parent = (client.natives.call as any)(
 				"Node.prototype.parentElement",
-				ctx.this
-			);
+				ctx.this,
+			) as Element | null;
 			ctx.args[0] = rewriteTextForElement(parent, text);
 		},
 	});
@@ -661,10 +661,10 @@ export default function (client: ScramjetClient, self: typeof window) {
 	client.Proxy("Text.prototype.insertData", {
 		apply(ctx) {
 			const text = String(ctx.args[1]);
-			const parent = client.natives.call(
+			const parent = (client.natives.call as any)(
 				"Node.prototype.parentElement",
-				ctx.this
-			);
+				ctx.this,
+			) as Element | null;
 			ctx.args[1] = rewriteTextForElement(parent, text);
 		},
 	});
@@ -672,28 +672,28 @@ export default function (client: ScramjetClient, self: typeof window) {
 	client.Proxy("Text.prototype.replaceData", {
 		apply(ctx) {
 			const text = String(ctx.args[2]);
-			const parent = client.natives.call(
+			const parent = (client.natives.call as any)(
 				"Node.prototype.parentElement",
-				ctx.this
-			);
+				ctx.this,
+			) as Element | null;
 			ctx.args[2] = rewriteTextForElement(parent, text);
 		},
 	});
 
 	client.Trap("Text.prototype.wholeText", {
 		get(ctx) {
-			const parent = client.natives.call(
+			const parent = (client.natives.call as any)(
 				"Node.prototype.parentElement",
-				ctx.this
-			);
+				ctx.this,
+			) as Element | null;
 			return getTextForElement(parent, ctx.get());
 		},
 		set(ctx, v) {
 			const text = String(v);
-			const parent = client.natives.call(
+			const parent = (client.natives.call as any)(
 				"Node.prototype.parentElement",
-				ctx.this
-			);
+				ctx.this,
+			) as Element | null;
 			return ctx.set(rewriteTextForElement(parent, text));
 		},
 	});
@@ -721,7 +721,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 				try {
 					if (!(SCRAMJETCLIENT in realwin)) {
 						// hook the iframe before the client can start to steal globals out of it
-						client.init.hookSubcontext(realwin, ctx.this);
+						client.init.hookSubcontext(realwin as unknown as Self, ctx.this);
 					}
 				} catch {
 					// cross-origin iframe, can't do anything here
@@ -730,7 +730,7 @@ export default function (client: ScramjetClient, self: typeof window) {
 
 				return realwin;
 			},
-		}
+		},
 	);
 
 	client.Trap(
@@ -744,17 +744,17 @@ export default function (client: ScramjetClient, self: typeof window) {
 			get(ctx) {
 				const realwin = client.descriptors.get(
 					`${ctx.this.constructor.name}.prototype.contentWindow`,
-					ctx.this
+					ctx.this,
 				);
 				if (!realwin) return realwin;
 
 				if (!(SCRAMJETCLIENT in realwin)) {
-					client.init.hookSubcontext(realwin, ctx.this);
+					client.init.hookSubcontext(realwin as unknown as Self, ctx.this);
 				}
 
 				return realwin.document;
 			},
-		}
+		},
 	);
 
 	client.Proxy(
@@ -768,10 +768,10 @@ export default function (client: ScramjetClient, self: typeof window) {
 				const doc = ctx.call();
 				if (doc) {
 					// we trap the contentDocument, this is really the scramjet version
-					return ctx.return(ctx.this.contentDocument);
+					return ctx.return((ctx.this as HTMLIFrameElement).contentDocument);
 				}
 			},
-		}
+		},
 	);
 
 	client.Proxy("DOMParser.prototype.parseFromString", {

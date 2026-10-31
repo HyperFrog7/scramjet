@@ -89,7 +89,7 @@ export type FetchHandlerInit = {
 
 	sendSetCookie: (
 		cookies: CookieSyncEntry[],
-		options?: CookieSyncOptions
+		options?: CookieSyncOptions,
 	) => Promise<void>;
 	fetchDataUrl(dataUrl: string): Promise<BareResponse>;
 	fetchBlobUrl(blobUrl: string): Promise<BareResponse>;
@@ -110,7 +110,8 @@ export class ScramjetFetchHandler extends EventTarget {
 	public crossOriginIsolated: boolean = false;
 	public context: ScramjetContext;
 
-	public trackedClients = new _Map<string, ScramjetFetchTrackedClient>();
+	public trackedClients: Map<string, ScramjetFetchTrackedClient> =
+		new _Map() as Map<string, ScramjetFetchTrackedClient>;
 
 	public hooks: {
 		rewriter: {
@@ -123,7 +124,7 @@ export class ScramjetFetchHandler extends EventTarget {
 	public fetchBlobUrl: (blobUrl: string) => Promise<Response>;
 	public sendSetCookie: (
 		cookies: CookieSyncEntry[],
-		options?: CookieSyncOptions
+		options?: CookieSyncOptions,
 	) => Promise<void>;
 
 	constructor(init: FetchHandlerInit) {
@@ -146,7 +147,7 @@ export class ScramjetFetchHandler extends EventTarget {
 	}
 
 	async handleFetch(
-		request: ScramjetFetchRequest
+		request: ScramjetFetchRequest,
 	): Promise<ScramjetFetchResponse> {
 		return doHandleFetch(this, request);
 	}

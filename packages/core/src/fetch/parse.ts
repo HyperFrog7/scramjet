@@ -25,6 +25,12 @@ export const QP = {
 
 export type QueryParamKey = keyof typeof QP;
 
+export type ScramjetRequestMode =
+	| "cors"
+	| "no-cors"
+	| "same-origin"
+	| "navigate";
+
 export type QueryParams = Partial<Record<QueryParamKey, string>>;
 
 const QP_INVERSE: Record<string, QueryParamKey> = (() => {
@@ -47,7 +53,7 @@ export function parseQueryParams(searchParams: URLSearchParams): {
 			params[logical] = value;
 		} else {
 			dbg.warn(
-				`extraneous query parameter ${key}=${value}. Assuming <form> element`
+				`extraneous query parameter ${key}=${value}. Assuming <form> element`,
 			);
 			extras[key] = value;
 		}
@@ -57,7 +63,7 @@ export function parseQueryParams(searchParams: URLSearchParams): {
 
 export function parseRequest(
 	request: ScramjetFetchRequest,
-	handler: ScramjetFetchHandler
+	handler: ScramjetFetchHandler,
 ): ScramjetFetchParsed {
 	const strippedUrl = new _URL(request.rawUrl.href);
 	const { params, extras } = parseQueryParams(request.rawUrl.searchParams);
@@ -73,7 +79,7 @@ export function parseRequest(
 	if (url.origin === new _URL(request.rawUrl).origin) {
 		// uh oh!
 		throw new Error(
-			"attempted to fetch from same origin - this means the site has obtained a reference to the real origin, aborting"
+			"attempted to fetch from same origin - this means the site has obtained a reference to the real origin, aborting",
 		);
 	}
 
@@ -105,10 +111,10 @@ export function parseRequest(
 			? params.fetchSite
 			: undefined;
 
-	const fetchMode = ["cors", "no-cors", "same-origin", "navigate"].includes(
-		params.mode
-	)
-		? params.mode
+	const fetchMode: ScramjetRequestMode | undefined = (
+		["cors", "no-cors", "same-origin", "navigate"] as const
+	).includes(params.mode as ScramjetRequestMode)
+		? (params.mode as ScramjetRequestMode)
 		: undefined;
 	const destination =
 		(params.destination as RequestDestination | undefined) ||
@@ -143,7 +149,7 @@ export function parseRequest(
 
 	if (request.rawClientUrl) {
 		parsed.clientUrl = new _URL(
-			unrewriteUrl(request.rawClientUrl, handler.context)
+			unrewriteUrl(request.rawClientUrl, handler.context),
 		);
 	}
 

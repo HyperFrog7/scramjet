@@ -6,7 +6,11 @@ export default function (client: ScramjetClient) {
 	client.Proxy("CSSStyleDeclaration.prototype.setProperty", {
 		apply(ctx) {
 			if (!ctx.args[1]) return;
-			ctx.args[1] = rewriteCss(ctx.args[1], client.context, client.meta);
+			(ctx.args as any[])[1] = rewriteCss(
+				(ctx.args as any[])[1],
+				client.context,
+				client.meta,
+			);
 		},
 	});
 
@@ -57,7 +61,11 @@ export default function (client: ScramjetClient) {
 	client.Proxy("CSSStyleValue.parse", {
 		apply(ctx) {
 			if (!ctx.args[1]) return;
-			ctx.args[1] = rewriteCss(ctx.args[1], client.context, client.meta);
+			(ctx.args as any[])[1] = rewriteCss(
+				(ctx.args as any[])[1],
+				client.context,
+				client.meta,
+			);
 		},
 	});
 
@@ -93,12 +101,12 @@ export default function (client: ScramjetClient) {
 					return Reflect_set(
 						target,
 						prop,
-						rewriteCss(value, client.context, client.meta)
+						rewriteCss(value, client.context, client.meta),
 					);
 				},
 			});
 		},
-		set(ctx, value: string) {
+		set(ctx, value) {
 			// this will actually run the trap for cssText. don't rewrite it here
 			ctx.set(value);
 		},

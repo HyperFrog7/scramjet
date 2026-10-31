@@ -14,15 +14,18 @@ export default function (client: ScramjetClient, self: Self) {
 				// and this works in every case EXCEPT for the fact that all three arguments can be strings which are copied instead of cloned
 				// so we have to use `$setrealm` which will pollute this with an object from the real realm
 
-				let pollutant;
+				let pollutant: any;
 
 				if (typeof ctx.args[0] === "object" && ctx.args[0] !== null) {
 					pollutant = ctx.args[0]; // try to use the first object we can find because it's more reliable
-				} else if (typeof ctx.args[2] === "object" && ctx.args[2] !== null) {
-					pollutant = ctx.args[2]; // next try to use transfer
+				} else if (
+					typeof (ctx.args as any[])[2] === "object" &&
+					(ctx.args as any[])[2] !== null
+				) {
+					pollutant = (ctx.args as any[])[2]; // next try to use transfer
 				} else if (
 					ctx.this &&
-					POLLUTANT in ctx.this &&
+					POLLUTANT in (ctx.this as object) &&
 					typeof ctx.this[POLLUTANT] === "object" &&
 					ctx.this[POLLUTANT] !== null
 				) {
@@ -66,8 +69,9 @@ export default function (client: ScramjetClient, self: Self) {
 				// eval("debugger");
 
 				// * origin because obviously
-				if (typeof ctx.args[1] === "string") ctx.args[1] = "*";
-				if (typeof ctx.args[1] === "object") ctx.args[1].targetOrigin = "*";
+				if (typeof ctx.args[1] === "string") (ctx.args as any[])[1] = "*";
+				if (typeof ctx.args[1] === "object")
+					(ctx.args[1] as any).targetOrigin = "*";
 
 				ctx.return(wrappedPostMessage.call(ctx.fn, ...ctx.args));
 			},

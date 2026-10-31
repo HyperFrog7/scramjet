@@ -36,8 +36,8 @@ export default function (client: ScramjetClient, _self: Self) {
 				client.natives.call(
 					"Document.prototype.write",
 					ctx.this,
-					writer.write(ctx.args.join(""))
-				)
+					writer.write(ctx.args.join("")),
+				),
 			);
 		},
 	});
@@ -49,8 +49,8 @@ export default function (client: ScramjetClient, _self: Self) {
 				client.natives.call(
 					"Document.prototype.write",
 					ctx.this,
-					writer.write(ctx.args.join("") + "\n")
-				)
+					writer.write(ctx.args.join("") + "\n"),
+				),
 			);
 		},
 	});
@@ -76,7 +76,7 @@ export default function (client: ScramjetClient, _self: Self) {
 	client.Proxy("Document.prototype.parseHTMLUnsafe", {
 		apply(ctx) {
 			const html = String(ctx.args[0]);
-			ctx.args[0] = rewriteHtml(html, client.context, client.meta, {
+			(ctx.args as any[])[0] = rewriteHtml(html, client.context, client.meta, {
 				loadScripts: false,
 				inline: true,
 				source: client.url.href,
@@ -121,7 +121,7 @@ export default function (client: ScramjetClient, _self: Self) {
 			return createReferrerString(
 				referrerURL,
 				client.url,
-				lastState.refererPolicy
+				lastState.refererPolicy,
 			);
 		},
 	});
@@ -132,9 +132,9 @@ export default function (client: ScramjetClient, _self: Self) {
 			apply(ctx) {
 				ctx.args[0] = String(ctx.args[0]).replace(
 					/((?:^|\s)\b\w+\[(?:src|href|data-href))[\^]?(=['"]?(?:https?[:])?\/\/)/,
-					"$1*$2"
+					"$1*$2",
 				);
 			},
-		}
+		},
 	);
 }

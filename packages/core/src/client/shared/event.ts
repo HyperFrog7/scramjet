@@ -157,14 +157,14 @@ export default function (client: ScramjetClient, self: Self) {
 			if (!arr) return;
 
 			const i = arr.findIndex(
-				(e) => e.event === ctx.args[0] && e.originalCallback === ctx.args[1]
+				(e) => e.event === ctx.args[0] && e.originalCallback === ctx.args[1],
 			);
 			if (i === -1) return;
 
 			const r = arr.splice(i, 1);
 			client.eventcallbacks.set(ctx.this, arr);
 
-			ctx.args[1] = r[0].proxiedCallback;
+			ctx.args[1] = r[0].proxiedCallback as EventListenerOrEventListenerObject;
 		},
 	});
 
@@ -189,7 +189,7 @@ export default function (client: ScramjetClient, self: Self) {
 					"Object.getOwnPropertyDescriptor",
 					null,
 					target,
-					key
+					key,
 				);
 				if (!descriptor.get || !descriptor.set || !descriptor.configurable)
 					continue;

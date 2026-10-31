@@ -37,7 +37,7 @@ const SEC_HEADERS = new _Set([
 	// This needs to be emulated, but for right now it isn't that important of a feature to be worried about
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data
 	"clear-site-data",
-]) as _Set<string>;
+]) as unknown as _Set<string>;
 
 /**
  * Headers that are actually URLs that need to be rewritten
@@ -46,12 +46,12 @@ const URL_HEADERS = new _Set([
 	"location",
 	"content-location",
 	"referer",
-]) as _Set<string>;
+]) as unknown as _Set<string>;
 
 function rewriteLinkHeader(
 	link: string,
 	context: ScramjetContext,
-	meta: URLMeta
+	meta: URLMeta,
 ) {
 	return link.replace(/<([^>]+)>/gi, (_match, p1) => {
 		return `<${rewriteUrl(p1, context, meta)}>`;
@@ -62,7 +62,7 @@ export async function rewriteResponseHeaders(
 	handler: ScramjetFetchHandler,
 	request: ScramjetFetchRequest,
 	parsed: ScramjetFetchParsed,
-	rawHeaders: RawHeaders
+	rawHeaders: RawHeaders,
 ): Promise<ScramjetHeaders> {
 	const headers = ScramjetHeaders.fromRawHeaders(rawHeaders);
 
@@ -119,7 +119,7 @@ export async function rewriteResponseHeaders(
 export function rewriteRequestHeaders(
 	request: ScramjetFetchRequest,
 	handler: ScramjetFetchHandler,
-	parsed: ScramjetFetchParsed
+	parsed: ScramjetFetchParsed,
 ): ScramjetHeaders {
 	const headers = request.initialHeaders.clone();
 
@@ -146,7 +146,7 @@ export function rewriteRequestHeaders(
 		const referer = createReferrerString(
 			originUrl,
 			parsed.url,
-			parsed.referrerPolicy ?? null
+			parsed.referrerPolicy ?? null,
 		);
 		if (referer) headers.set("Referer", referer);
 	}
@@ -155,7 +155,7 @@ export function rewriteRequestHeaders(
 	const cookies = handler.context.cookieJar.getCookies(
 		parsed.url,
 		false,
-		sameSiteContext
+		sameSiteContext,
 	);
 
 	if (cookies.length) {
@@ -184,7 +184,7 @@ function applyFetchMetadataHeaders(
 	headers: ScramjetHeaders,
 	request: ScramjetFetchRequest,
 	parsed: ScramjetFetchParsed,
-	handler: ScramjetFetchHandler
+	handler: ScramjetFetchHandler,
 ) {
 	// Strip browser-attached Sec-Fetch-* (computed from the proxy URL space).
 	headers.delete("sec-fetch-site");
@@ -283,7 +283,7 @@ function applyFetchMetadataHeaders(
  */
 function requestIncludesCredentials(
 	request: ScramjetFetchRequest,
-	parsed: ScramjetFetchParsed
+	parsed: ScramjetFetchParsed,
 ): boolean {
 	if (parsed.fetchCredentialsInclude) return true;
 	const dest = parsed.destination;
@@ -326,7 +326,7 @@ function requestIncludesCredentials(
  */
 function computeFetchMode(
 	request: ScramjetFetchRequest,
-	parsed: ScramjetFetchParsed
+	parsed: ScramjetFetchParsed,
 ): string {
 	if (parsed.fetchMode) return parsed.fetchMode;
 	const dest = parsed.destination;
@@ -362,7 +362,7 @@ function computeFetchMode(
 function resolveFetchInitiatorUrl(
 	request: ScramjetFetchRequest,
 	parsed: ScramjetFetchParsed,
-	handler: ScramjetFetchHandler
+	handler: ScramjetFetchHandler,
 ): URL | undefined {
 	// On any hop after the first, the propagated initiator origin is the
 	// authoritative source. rawReferrer may have been replaced with the
@@ -434,7 +434,7 @@ function isLoopbackHost(hostname: string): boolean {
  */
 export function computeFetchSite(
 	originUrl: URL,
-	destUrl: URL
+	destUrl: URL,
 ): "same-origin" | "same-site" | "cross-site" {
 	if (
 		originUrl.protocol === destUrl.protocol &&
@@ -458,7 +458,7 @@ export function computeFetchSite(
  */
 export function worstFetchSite(
 	a: "none" | "same-origin" | "same-site" | "cross-site",
-	b: "none" | "same-origin" | "same-site" | "cross-site"
+	b: "none" | "same-origin" | "same-site" | "cross-site",
 ): "none" | "same-origin" | "same-site" | "cross-site" {
 	const order = { "cross-site": 0, "same-site": 1, "same-origin": 2, none: 3 };
 	return order[a] <= order[b] ? a : b;
@@ -474,7 +474,7 @@ export function worstFetchSite(
 function computeSameSiteContext(
 	request: ScramjetFetchRequest,
 	parsed: ScramjetFetchParsed,
-	rawOriginUrl: URL | undefined
+	rawOriginUrl: URL | undefined,
 ): "strict" | "lax" | "cross-site" {
 	// If a redirect chain previously passed through a cross-site origin, the
 	// final request is always treated as cross-site regardless of its destination.

@@ -6,7 +6,7 @@ export const String_fromCodePoint = globalThis.String.fromCodePoint;
 export const String_fromCharCode = globalThis.String.fromCharCode;
 const Function_prototype_call = globalThis.Function.prototype.call;
 export const String_startsWith = Function_prototype_call.bind(
-	globalThis.String.prototype.startsWith
+	globalThis.String.prototype.startsWith,
 ) as (str: string, searchString: string, position?: number) => boolean;
 export const Number = globalThis.Number;
 export const Number_parseInt = globalThis.Number.parseInt;
@@ -53,10 +53,10 @@ export const Performance_now = performance.now.bind(performance);
 export const btoa = globalThis.btoa;
 export const atob = globalThis.atob;
 export const URL_createObjectURL = globalThis.URL.createObjectURL.bind(
-	globalThis.URL
+	globalThis.URL,
 );
 export const URL_revokeObjectURL = globalThis.URL.revokeObjectURL.bind(
-	globalThis.URL
+	globalThis.URL,
 );
 
 export const Error = globalThis.Error;
@@ -66,19 +66,19 @@ export const Math_min = globalThis.Math.min;
 export const Promise_all = globalThis.Promise.all.bind(globalThis.Promise);
 export const Promise_race = globalThis.Promise.race.bind(globalThis.Promise);
 export const Promise_resolve = globalThis.Promise.resolve.bind(
-	globalThis.Promise
+	globalThis.Promise,
 );
 export const Promise_reject = globalThis.Promise.reject.bind(
-	globalThis.Promise
+	globalThis.Promise,
 );
 export const Promise_allSettled = globalThis.Promise.allSettled.bind(
-	globalThis.Promise
+	globalThis.Promise,
 );
 export const Promise_any = globalThis.Promise.any.bind(globalThis.Promise);
 
 export const Symbol_for = globalThis.Symbol.for;
 
-declare const WrappedBrand: unique symbol;
+export declare const WrappedBrand: unique symbol;
 
 type WrappedInstance<T> = T extends object ? Wrapped<T> : T;
 
@@ -242,7 +242,7 @@ export function makeWrap<T extends object>(source: T): Wrapped<T> {
 	// Actually clone the source itself (including own properties)
 	const wrapped = Object.create(
 		clonePrototypeChain(Object.getPrototypeOf(source)),
-		getAllPropertyDescriptors(source)
+		getAllPropertyDescriptors(source),
 	);
 
 	return wrapped as Wrapped<T>;

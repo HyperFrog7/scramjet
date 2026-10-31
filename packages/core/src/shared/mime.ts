@@ -65,13 +65,13 @@ const FONT_ESSENCES = new _Set([
 	"application/font-woff",
 	"application/vnd.ms-fontobject",
 	"application/vnd.ms-opentype",
-]);
+]) as unknown as ReadonlySet<string>;
 
 const ARCHIVE_ESSENCES = new _Set([
 	"application/x-rar-compressed",
 	"application/zip",
 	"application/x-gzip",
-]);
+]) as unknown as ReadonlySet<string>;
 
 const JAVASCRIPT_ESSENCES = new _Set([
 	"application/ecmascript",
@@ -90,7 +90,7 @@ const JAVASCRIPT_ESSENCES = new _Set([
 	"text/livescript",
 	"text/x-ecmascript",
 	"text/x-javascript",
-]);
+]) as unknown as ReadonlySet<string>;
 
 /** A MIME type whose type is "image". */
 export function isImageMimeType(mime: string | ParsedMimeType): boolean {
@@ -177,7 +177,7 @@ export function getScriptBlockTypeString(
 	type: string | null | undefined,
 	language: string | null | undefined,
 	hasTypeAttribute = type != null,
-	hasLanguageAttribute = language != null
+	hasLanguageAttribute = language != null,
 ): string {
 	if (
 		(hasTypeAttribute && (type ?? "") === "") ||
@@ -219,7 +219,7 @@ export function isModuleScriptType(type: string | null | undefined): boolean {
  * as opposed to triggering a download when Content-Disposition is absent.
  */
 export function isInlineDisplayableMimeType(
-	mime: string | ParsedMimeType
+	mime: string | ParsedMimeType,
 ): boolean {
 	const p = asParsed(mime);
 	if (!p) return false;

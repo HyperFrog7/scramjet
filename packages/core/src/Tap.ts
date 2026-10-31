@@ -1,4 +1,4 @@
-import { Promise_all } from "@/shared/snapshot";
+import { Error, Promise_all } from "@/shared/snapshot";
 
 type Description = {
 	context?: object;
@@ -7,7 +7,7 @@ type Description = {
 
 type Callback<T extends Description> = (
 	context: T["context"],
-	props: T["props"]
+	props: T["props"],
 ) => void | Promise<void>;
 
 export type TapOrder = {
@@ -44,7 +44,7 @@ function mergeTapOrder(plugin: Plugin, order?: TapOrder): TapOrder {
 }
 
 function sortCallbacks<T extends Description>(
-	callbacks: CallbackInfo<T>[]
+	callbacks: CallbackInfo<T>[],
 ): CallbackInfo<T>[] {
 	const afters: Record<string, string[]> = {};
 	for (const callback of callbacks) {
@@ -71,7 +71,9 @@ function sortCallbacks<T extends Description>(
 		if (afters[callback.plugin.name]) {
 			for (const after of afters[callback.plugin.name]) {
 				if (visited.includes(after)) {
-					throw `Circular dependency detected: ${callback.plugin.name} -> ${after}. Using append order.`;
+					throw new Error(
+						`Circular dependency detected: ${callback.plugin.name} -> ${after}. Using append order.`,
+					);
 				}
 				const afterCallback = callbacks.find((c) => c.plugin.name === after);
 				if (afterCallback) {
@@ -98,13 +100,13 @@ function sortCallbacks<T extends Description>(
 export class Plugin {
 	constructor(
 		public name: string,
-		public readonly tapOrder: TapOrder = {}
+		public readonly tapOrder: TapOrder = {},
 	) {}
 
 	tap<T extends Description>(
 		hook: T,
 		callback: Callback<T>,
-		order?: TapOrder
+		order?: TapOrder,
 	): void {
 		Tap.tap(hook, callback, this, mergeTapOrder(this, order));
 	}
@@ -114,7 +116,7 @@ export class Tap {
 	static dispatch<T extends Description>(
 		hook: T,
 		context: T["context"],
-		props: T["props"]
+		props: T["props"],
 	): Promise<void[]> | null {
 		const internal = hook as unknown as InternalHookDescription;
 		let callbacks = internal.tap.callbacks[internal.key];
@@ -130,7 +132,7 @@ export class Tap {
 		hook: T,
 		callback: Callback<T>,
 		plugin: Plugin = new Plugin("anonymous"),
-		order: TapOrder = {}
+		order: TapOrder = {},
 	) {
 		const internal = hook as unknown as InternalHookDescription;
 		const callbacks = internal.tap.callbacks;
