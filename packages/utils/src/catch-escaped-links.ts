@@ -1,6 +1,6 @@
-import { ScramjetHeaders } from "@mercuryworkshop/scramjet";
-import { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import { ScramjetHeaders } from "driftproxy";
+import { ManagedPlugin } from "driftproxy-controller";
+import type { Frame } from "driftproxy-controller";
 
 /**
  * Intercepts top-level navigation requests (triggered by clicking "open in new tab" on a link, or window.open)
@@ -28,7 +28,7 @@ export class CatchEscapedLinksPlugin extends ManagedPlugin {
 					]),
 				};
 			},
-			{ after: ["scramjet-http-cache"] }
+			{ after: ["scramjet-http-cache"] },
 		);
 	}
 }

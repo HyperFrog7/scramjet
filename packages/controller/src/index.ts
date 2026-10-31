@@ -1,4 +1,4 @@
-import { type MethodsDefinition, RpcHelper } from "@mercuryworkshop/rpc";
+import { type MethodsDefinition, RpcHelper } from "driftproxy-rpc";
 import {
 	BareResponse,
 	type ProxyTransport,
@@ -19,7 +19,7 @@ import {
 	type ScramjetInterface,
 	type TrackedHistoryState,
 	Plugin,
-} from "@mercuryworkshop/scramjet";
+} from "driftproxy";
 import { CONTROLLERFRAME } from "./symbols";
 import type {
 	FrameInitHooks,
@@ -99,7 +99,7 @@ const BROADCASTCHANNEL_NAME = "__scramjet_controller_channel";
 let cookieDbPromise: Promise<IDBDatabase> | null = null;
 
 function parsePersistedCookieState(
-	value: unknown
+	value: unknown,
 ): PersistedCookieState | null {
 	if (
 		typeof value !== "object" ||
@@ -169,19 +169,19 @@ async function readCookieState(): Promise<PersistedCookieState | null> {
 
 async function writeCookieState(
 	cookies: string,
-	currentUpdatedAt: number
+	currentUpdatedAt: number,
 ): Promise<number> {
 	try {
 		const db = await openCookieDatabase();
 		const transaction = db.transaction(COOKIE_STORE_NAME, "readwrite");
 		const store = transaction.objectStore(COOKIE_STORE_NAME);
 		const existing = parsePersistedCookieState(
-			await requestToPromise(store.get(COOKIE_STATE_KEY))
+			await requestToPromise(store.get(COOKIE_STATE_KEY)),
 		);
 		const updatedAt = Math.max(
 			Date.now(),
 			currentUpdatedAt + 1,
-			(existing?.updatedAt ?? 0) + 1
+			(existing?.updatedAt ?? 0) + 1,
 		);
 		const state: PersistedCookieState = {
 			updatedAt,
@@ -286,9 +286,9 @@ export class Controller {
 							new Uint8Array(buf)
 								.reduce(
 									(data, byte) => (data.push(String.fromCharCode(byte)), data),
-									[] as any
+									[] as any,
 								)
-								.join("")
+								.join(""),
 						);
 
 						this.wasmPayload = `self.WASM = '${b64}';`;
@@ -363,7 +363,7 @@ export class Controller {
 							method,
 							body,
 							headers,
-							undefined
+							undefined,
 						);
 						return [response, [response.body]];
 					},
@@ -379,7 +379,7 @@ export class Controller {
 					connect: async ({ url, protocols, requestHeaders, port }) => {
 						let resolve: (arg: TransportToController["connect"][1]) => void;
 						const promise = new Promise<TransportToController["connect"][1]>(
-							(res) => (resolve = res)
+							(res) => (resolve = res),
 						);
 						const [send, close] = this.transport.connect(
 							new URL(url),
@@ -398,7 +398,7 @@ export class Controller {
 										type: "data",
 										data: data,
 									} as WebSocketMessage,
-									data instanceof ArrayBuffer ? [data] : []
+									data instanceof ArrayBuffer ? [data] : [],
 								);
 							},
 							(close, reason) => {
@@ -413,12 +413,12 @@ export class Controller {
 									result: "failure",
 									error: error,
 								});
-							}
+							},
 						);
 						port.onmessageerror = (ev) => {
 							console.error(
 								"Transport port messageerror (this should never happen!)",
-								ev
+								ev,
 							);
 						};
 						port.onmessage = ({ data }: { data: WebSocketMessage }) => {
@@ -433,12 +433,12 @@ export class Controller {
 					},
 				},
 				"transport",
-				(data, transfer) => port.postMessage(data, transfer)
+				(data, transfer) => port.postMessage(data, transfer),
 			);
 			port.onmessageerror = (ev) => {
 				console.error(
 					"Transport port messageerror (this should never happen!)",
-					ev
+					ev,
 				);
 			};
 			port.onmessage = (e) => {
@@ -455,7 +455,7 @@ export class Controller {
 		this.scramjetConfig = deepMerge(scramjetConfig, scramjetDefaultConfig);
 		this.scramjetConfig = deepMerge(
 			this.scramjetConfig,
-			init.scramjetConfig || {}
+			init.scramjetConfig || {},
 		) as ScramjetConfig;
 		this.prefix = this.config.prefix + this.id + "/";
 		this.serviceWorkerController = init.serviceworker;
@@ -476,13 +476,13 @@ export class Controller {
 					throw new Error("Port not found");
 				}
 				this.port.postMessage(data, transfer);
-			}
+			},
 		);
 		this.transport = init.transport;
 
 		this.cookieSyncChannel.addEventListener(
 			"message",
-			this.onCookieSyncMessage
+			this.onCookieSyncMessage,
 		);
 		this.setupMessagePort();
 
@@ -547,13 +547,13 @@ export class Controller {
 					id: this.id,
 				},
 			},
-			[channel.port2]
+			[channel.port2],
 		);
 	}
 
 	// TODO: should this be a method on the cookie jar?
 	private applyCookieSyncEntries(
-		cookies: SerializedCookieSyncEntry[] | undefined
+		cookies: SerializedCookieSyncEntry[] | undefined,
 	) {
 		if (!Array.isArray(cookies)) {
 			return;
@@ -570,7 +570,7 @@ export class Controller {
 
 	async propagateCookieSync(
 		cookies: SerializedCookieSyncEntry[],
-		options: CookieSyncOptions = {}
+		options: CookieSyncOptions = {},
 	): Promise<void> {
 		if (!this.port) {
 			return;
@@ -608,7 +608,7 @@ export class Controller {
 	async persistCookies(): Promise<void> {
 		const updatedAt = await writeCookieState(
 			this.cookieJar.dump(),
-			this.cookieUpdatedAt
+			this.cookieUpdatedAt,
 		);
 		if (updatedAt <= this.cookieUpdatedAt) {
 			return;
@@ -632,7 +632,7 @@ export class Controller {
 	createFrame(element?: HTMLIFrameElement, options: FrameOptions = {}): Frame {
 		if (!this.ready) {
 			throw new Error(
-				"Controller is not ready! Try awaiting controller.wait()"
+				"Controller is not ready! Try awaiting controller.wait()",
 			);
 		}
 		element ??= document.createElement("iframe");
@@ -652,9 +652,9 @@ function base64Encode(text: string) {
 			.encode(text)
 			.reduce(
 				(data, byte) => (data.push(String.fromCharCode(byte)), data),
-				[] as any
+				[] as any,
 			)
-			.join("")
+			.join(""),
 	);
 }
 
@@ -664,13 +664,13 @@ function yieldGetInjectScripts(
 	prefix: URL,
 	cookieJar: CookieJar,
 	codecEncode: (input: string) => string,
-	codecDecode: (input: string) => string
+	codecDecode: (input: string) => string,
 ) {
 	const getInjectScripts: ScramjetInterface["getInjectScripts"] = (
 		meta,
 		handler,
 		htmlcontext,
-		script
+		script,
 	) => {
 		function base64Encode(text: string) {
 			return btoa(
@@ -678,9 +678,9 @@ function yieldGetInjectScripts(
 					.encode(text)
 					.reduce(
 						(data, byte) => (data.push(String.fromCharCode(byte)), data),
-						[] as any
+						[] as any,
 					)
-					.join("")
+					.join(""),
 			);
 		}
 		return [
@@ -702,7 +702,7 @@ function yieldGetInjectScripts(
 						initHeaders: ${JSON.stringify(htmlcontext.headers ?? [])},
 						history: ${JSON.stringify(htmlcontext.history ?? [])},
 					})
-				`)
+				`),
 			),
 		];
 	};
@@ -731,7 +731,7 @@ export class Frame {
 					new URL(this.prefix, location.href),
 					this.controller.cookieJar,
 					this.controller.config.codec.encode,
-					this.controller.config.codec.decode
+					this.controller.config.codec.decode,
 				),
 				getWorkerInjectScripts: (meta, type, script) => {
 					let str = "";
@@ -766,7 +766,7 @@ export class Frame {
 
 						client.hook();
 					})();
-					`)
+					`),
 					);
 
 					return str;
@@ -781,7 +781,7 @@ export class Frame {
 	constructor(
 		public controller: Controller,
 		public element: HTMLIFrameElement,
-		public options: FrameOptions = {}
+		public options: FrameOptions = {},
 	) {
 		this.id = makeId();
 		this.prefix = this.controller.prefix + this.id + "/";
@@ -797,7 +797,7 @@ export class Frame {
 						url: url.href,
 						cookie,
 					})),
-					options
+					options,
 				);
 			},
 			async fetchBlobUrl(url) {
@@ -820,11 +820,11 @@ export class Frame {
 		for (const plugin of this.plugins) {
 			for (const dependency of plugin.dependencies) {
 				const dependencyPlugin = this.plugins.find(
-					(p) => p.name === dependency
+					(p) => p.name === dependency,
 				);
 				if (!dependencyPlugin) {
 					throw new Error(
-						`Dependency ${dependency} not found for plugin ${plugin.name}`
+						`Dependency ${dependency} not found for plugin ${plugin.name}`,
 					);
 				}
 			}

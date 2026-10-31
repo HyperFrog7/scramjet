@@ -12,12 +12,12 @@
 	"author": "",
 	"license": "AGPL-3.0-only",
 	"dependencies": {
-		"@mercuryworkshop/proxy-bootstrap": "*",
+		"driftproxy-bootstrap": "*",
 		"express": "^4.21.2"
 	},
 	"devDependencies": {
-		"@mercuryworkshop/scramjet-utils": "*",
-		"@mercuryworkshop/scramjet-controller": "*",
-		"@mercuryworkshop/scramjet": "*"
+		"driftproxy-utils": "*",
+		"driftproxy-controller": "*",
+		"driftproxy": "*"
 	}
 }

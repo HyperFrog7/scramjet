@@ -6,10 +6,11 @@ on:
       - ".zed/**"
       - ".vscode/**"
       - "README.md"
-      # Formatters
-      - ".editorconfig"
-      - "eslint.config.json"
-      - "prettier.config.json"
+      # Formatters and tooling config
+      - ".prettierrc"
+      - ".prettierignore"
+      - ".nvmrc"
+      - "packages/core/eslint.config.mjs"
   pull_request:
     paths-ignore: *ci_ignore_paths
   workflow_dispatch:
@@ -51,7 +52,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version packages/core/package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view @mercuryworkshop/scramjet versions --json | jq -r '.[-1]' || echo "0.0.0")
+          LATEST_VERSION=$(npm view driftproxy versions --json | jq -r '.[-1]' || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
@@ -72,7 +73,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version packages/controller/package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view @mercuryworkshop/scramjet-controller versions --json | jq -r '.[-1]' || echo "0.0.0")
+          LATEST_VERSION=$(npm view driftproxy-controller versions --json | jq -r '.[-1]' || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
@@ -93,7 +94,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version packages/utils/package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view @mercuryworkshop/scramjet-utils versions --json | jq -r '.[-1]' || echo "0.0.0")
+          LATEST_VERSION=$(npm view driftproxy-utils versions --json | jq -r '.[-1]' || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
@@ -114,7 +115,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version packages/bootstrap/package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view @mercuryworkshop/proxy-bootstrap versions --json | jq -r '.[-1]' || echo "0.0.0")
+          LATEST_VERSION=$(npm view driftproxy-bootstrap versions --json | jq -r '.[-1]' || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
@@ -135,7 +136,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version packages/create-proxy-app/package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view create-proxy-app versions --json | jq -r '.[-1]' || echo "0.0.0")
+          LATEST_VERSION=$(npm view create-driftproxy versions --json | jq -r '.[-1]' || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
@@ -182,6 +183,9 @@ jobs:
         run: pnpm pack
         working-directory: packages/core
 
+      - name: Typecheck Scramjet
+        run: pnpm --filter driftproxy typecheck
+
       - name: Pack Scramjet Controller
         run: pnpm pack
         working-directory: packages/controller
@@ -208,7 +212,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: scramjet-package
-          path: packages/core/mercuryworkshop-scramjet-*.tgz
+          path: packages/core/driftproxy-*.tgz
 
       - name: Upload Artifact (scramjet/controller)
         uses: actions/upload-artifact@v4
@@ -220,7 +224,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: scramjet-controller-package
-          path: packages/controller/mercuryworkshop-scramjet-controller-*.tgz
+          path: packages/controller/driftproxy-controller-*.tgz
 
       - name: Upload Artifact (scramjet/utils)
         uses: actions/upload-artifact@v4
@@ -232,19 +236,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: scramjet-utils-package
-          path: packages/utils/mercuryworkshop-scramjet-utils-*.tgz
+          path: packages/utils/driftproxy-utils-*.tgz
 
       - name: Upload Artifact (proxy-bootstrap) (packaged)
         uses: actions/upload-artifact@v4
         with:
           name: proxy-bootstrap-package
-          path: packages/bootstrap/mercuryworkshop-proxy-bootstrap-*.tgz
+          path: packages/bootstrap/driftproxy-bootstrap-*.tgz
 
       - name: Upload Artifact (create-proxy-app) (packaged)
         uses: actions/upload-artifact@v4
         with:
-          name: create-proxy-app-package
-          path: packages/create-proxy-app/create-proxy-app-*.tgz
+          name: create-driftproxy-package
+          path: packages/create-proxy-app/create-driftproxy-*.tgz
 
   package-validation:
     name: Validate Package Structure
@@ -274,7 +278,7 @@ jobs:
           path: packages/core
 
       - name: Extract package
-        run: tar xvf mercuryworkshop-scramjet-*.tgz package --strip-components=1
+        run: tar xvf driftproxy-*.tgz package --strip-components=1
         working-directory: packages/core
 
       - name: Run package validation tests
@@ -379,7 +383,7 @@ jobs:
           tag: latest
           commit: main
           body: "${{ github.event.head_commit.url }} ${{ github.event.head_commit.message }}"
-          artifacts: "mercuryworkshop-scramjet-*.tgz,mercuryworkshop-scramjet-controller-*.tgz"
+          artifacts: "driftproxy-*.tgz,driftproxy-controller-*.tgz"
           prerelease: true
 
       - name: Release tagged version to GitHub (scramjet/core)
@@ -390,7 +394,7 @@ jobs:
           tag: "v${{ needs.version-check.outputs.scramjet_new_version }}"
           commit: main
           body: "${{ github.event.head_commit.url }} ${{ github.event.head_commit.message }}"
-          artifacts: "mercuryworkshop-scramjet-*.tgz"
+          artifacts: "driftproxy-*.tgz"
 
       - name: Release tagged version to GitHub (scramjet/controller)
         if: needs.version-check.outputs.controller_version_changed == 'true'
@@ -400,7 +404,7 @@ jobs:
           tag: "v${{ needs.version-check.outputs.controller_new_version }}-controller"
           commit: main
           body: "${{ github.event.head_commit.url }} ${{ github.event.head_commit.message }}"
-          artifacts: "mercuryworkshop-scramjet-controller-*.tgz"
+          artifacts: "driftproxy-controller-*.tgz"
           makeLatest: false
 
   publish:
@@ -452,28 +456,28 @@ jobs:
         if: needs.version-check.outputs.create_proxy_app_version_changed == 'true'
         uses: actions/download-artifact@v4
         with:
-          name: create-proxy-app-package
+          name: create-driftproxy-package
           path: .
 
       - name: Publish Scramjet
         if: needs.version-check.outputs.scramjet_version_changed == 'true'
-        run: pnpm publish mercuryworkshop-scramjet-${{ needs.version-check.outputs.scramjet_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.scramjet_tag_arg }}
+        run: pnpm publish driftproxy-${{ needs.version-check.outputs.scramjet_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.scramjet_tag_arg }}
 
       - name: Publish Scramjet Controller
         if: needs.version-check.outputs.controller_version_changed == 'true'
-        run: pnpm publish mercuryworkshop-scramjet-controller-${{ needs.version-check.outputs.controller_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.controller_tag_arg }}
+        run: pnpm publish driftproxy-controller-${{ needs.version-check.outputs.controller_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.controller_tag_arg }}
 
       - name: Publish Scramjet Utils
         if: needs.version-check.outputs.utils_version_changed == 'true'
-        run: pnpm publish mercuryworkshop-scramjet-utils-${{ needs.version-check.outputs.utils_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.utils_tag_arg }}
+        run: pnpm publish driftproxy-utils-${{ needs.version-check.outputs.utils_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.utils_tag_arg }}
 
       - name: Publish Proxy Bootstrap
         if: needs.version-check.outputs.bootstrap_version_changed == 'true'
-        run: pnpm publish mercuryworkshop-proxy-bootstrap-${{ needs.version-check.outputs.bootstrap_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.bootstrap_tag_arg }}
+        run: pnpm publish driftproxy-bootstrap-${{ needs.version-check.outputs.bootstrap_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.bootstrap_tag_arg }}
 
       - name: Publish create-proxy-app
         if: needs.version-check.outputs.create_proxy_app_version_changed == 'true'
-        run: pnpm publish create-proxy-app-${{ needs.version-check.outputs.create_proxy_app_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.create_proxy_app_tag_arg }}
+        run: pnpm publish create-driftproxy-${{ needs.version-check.outputs.create_proxy_app_new_version }}.tgz --access public --provenance ${{ needs.version-check.outputs.create_proxy_app_tag_arg }}
 
   frontend:
     name: Build Frontend

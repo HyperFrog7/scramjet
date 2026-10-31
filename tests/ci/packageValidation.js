@@ -23,7 +23,7 @@ const EXPECTED_CORE_DIST_FILES = [
 
 /**
  * Required type definition files and directories.
- * These aren't going to be all, because the modules update quite often, but the entry points and basic structure will be validatedl
+ * These aren't going to be all, because the modules update quite often, but the entry points and basic structure will be validated.
  */
 const EXPECTED_TYPE_FILES = [
 	"packages/core/dist/types/**/*.d.ts",
@@ -47,7 +47,7 @@ test("Package contains all required distribution files", async (t) => {
 	t.deepEqual(
 		missingFiles,
 		[],
-		`Missing required distribution files: ${missingFiles.join(", ")}`
+		`Missing required distribution files: ${missingFiles.join(", ")}`,
 	);
 });
 
@@ -57,7 +57,7 @@ test("Package contains all required distribution files", async (t) => {
  */
 test("All required JS bundles have corresponding source maps", async (t) => {
 	const jsFiles = EXPECTED_CORE_DIST_FILES.filter((file) =>
-		file.endsWith(".js")
+		file.endsWith(".js"),
 	);
 	const missingMaps = [];
 
@@ -71,7 +71,7 @@ test("All required JS bundles have corresponding source maps", async (t) => {
 	t.deepEqual(
 		missingMaps,
 		[],
-		`Missing source map files: ${missingMaps.join(", ")}`
+		`Missing source map files: ${missingMaps.join(", ")}`,
 	);
 });
 
@@ -92,7 +92,7 @@ test("Package contains required type definitions", async (t) => {
 	t.deepEqual(
 		missingTypeGlobs,
 		[],
-		`No type definition files found for globs: ${missingTypeGlobs.join(", ")}`
+		`No type definition files found for globs: ${missingTypeGlobs.join(", ")}`,
 	);
 });
 

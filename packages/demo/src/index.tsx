@@ -2,9 +2,9 @@ import LoadInterstitial from "./components/LoadInterstitial";
 import App from "./App";
 import LibcurlClient from "@mercuryworkshop/libcurl-transport";
 import EpoxyClient from "@mercuryworkshop/epoxy-transport";
-import { defaultConfigDev } from "@mercuryworkshop/scramjet";
-import { Controller } from "@mercuryworkshop/scramjet-controller";
-import { HttpCachePlugin } from "@mercuryworkshop/scramjet-utils";
+import { defaultConfigDev } from "driftproxy";
+import { Controller } from "driftproxy-controller";
+import { HttpCachePlugin } from "driftproxy-utils";
 import { demoSettingsStore } from "./store";
 
 let app = document.getElementById("app")!;
@@ -37,7 +37,7 @@ async function waitForControllerOrReady(timeoutMs = 10000): Promise<void> {
 		} as any);
 	});
 	const timeout = new Promise<void>((resolve) =>
-		setTimeout(resolve, timeoutMs)
+		setTimeout(resolve, timeoutMs),
 	);
 
 	// Wait for whichever happens first; on timeout we continue to avoid blocking the UI.
@@ -121,8 +121,8 @@ async function mount() {
 		let err = e as any;
 		app.replaceWith(
 			document.createTextNode(
-				`Error mounting: ${"message" in err ? err.message : err}`
-			)
+				`Error mounting: ${"message" in err ? err.message : err}`,
+			),
 		);
 		console.error(err);
 		throw e;

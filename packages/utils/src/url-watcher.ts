@@ -1,5 +1,5 @@
-import { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import { ManagedPlugin } from "driftproxy-controller";
+import type { Frame } from "driftproxy-controller";
 
 export type UrlWatcherOptions = {};
 
@@ -11,7 +11,7 @@ export type UrlWatcherOptions = {};
 export class UrlWatcherPlugin extends ManagedPlugin {
 	constructor(
 		private onUrlChange: (url: string) => void,
-		private options: UrlWatcherOptions = {}
+		private options: UrlWatcherOptions = {},
 	) {
 		super("url-watcher", []);
 	}

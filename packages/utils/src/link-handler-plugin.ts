@@ -1,5 +1,5 @@
-import { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import { ManagedPlugin } from "driftproxy-controller";
+import type { Frame } from "driftproxy-controller";
 import type { AddAlwaysLastEventListener } from "./alwaysLastBubble";
 import { EventHandlerPlugin } from "./event-handler-plugin";
 
@@ -13,7 +13,7 @@ export type LinkHandlerPluginOptions = {};
 export class LinkHandlerPlugin extends ManagedPlugin {
 	constructor(
 		private onNewTab: (url: string) => void,
-		private options: LinkHandlerPluginOptions = {}
+		private options: LinkHandlerPluginOptions = {},
 	) {
 		super("link-handler", ["event-handler"]);
 	}
@@ -23,7 +23,7 @@ export class LinkHandlerPlugin extends ManagedPlugin {
 			frame.hooks.init.post,
 			(_context) => {
 				const eventHandler = frame.plugins.find(
-					(p): p is EventHandlerPlugin => p.name === "event-handler"
+					(p): p is EventHandlerPlugin => p.name === "event-handler",
 				)!;
 				const attachAnchorListeners = (node: HTMLAnchorElement) => {
 					const openInNewTab = () => {
@@ -69,7 +69,7 @@ export class LinkHandlerPlugin extends ManagedPlugin {
 					window.document.querySelectorAll("*").forEach((e) => e);
 				});
 			},
-			{ after: ["event-handler"] }
+			{ after: ["event-handler"] },
 		);
 	}
 }

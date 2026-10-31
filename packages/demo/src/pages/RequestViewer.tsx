@@ -11,8 +11,8 @@ import {
 	isXmlMimeType,
 	parseMimeType,
 	Plugin as ScramjetPlugin,
-} from "@mercuryworkshop/scramjet";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+} from "driftproxy";
+import type { Frame } from "driftproxy-controller";
 import { demoSettingsStore } from "../store";
 import Monaco from "../components/Monaco";
 import { browserState } from "./BrowserView";
@@ -43,7 +43,7 @@ export type RequestEntry = {
 };
 
 const normalizeHeaders = (
-	input?: Headers | Array<[string, string]> | Record<string, string> | null
+	input?: Headers | Array<[string, string]> | Record<string, string> | null,
 ): Array<[string, string]> => {
 	if (!input) return [];
 	if (typeof (input as any).toRawHeaders === "function") {
@@ -113,11 +113,11 @@ const languageFromContentType = (contentType?: string | null) => {
 
 const getHeaderValue = (
 	headers: Array<[string, string]> | undefined,
-	name: string
+	name: string,
 ) => {
 	if (!headers) return undefined;
 	const match = headers.find(
-		([key]) => key.toLowerCase() === name.toLowerCase()
+		([key]) => key.toLowerCase() === name.toLowerCase(),
 	);
 	return match ? match[1] : undefined;
 };
@@ -132,7 +132,7 @@ const isMediaContentType = (contentType?: string | null) => {
 
 const getMediaUrlFromBody = (
 	body: unknown,
-	contentType?: string | null
+	contentType?: string | null,
 ): { url?: string; size?: number } => {
 	if (!isMediaContentType(contentType) || body == null) return {};
 	if (body instanceof Blob) {
@@ -191,10 +191,10 @@ const StableBodyViewer: Component<
 	const largeText = mode
 		.zip(bodyBytes)
 		.map(
-			([mode, bodyBytes]) => mode === "code" && bodyBytes > LARGE_BODY_BYTES
+			([mode, bodyBytes]) => mode === "code" && bodyBytes > LARGE_BODY_BYTES,
 		);
 	const previewValue = value.map((value) =>
-		truncateLargeBodyPreview(value ?? "")
+		truncateLargeBodyPreview(value ?? ""),
 	);
 	const loadedFullText = largeText
 		.zip(expanded)
@@ -215,40 +215,40 @@ const StableBodyViewer: Component<
 		<div class="body-viewer">
 			<div
 				class={mode.map(
-					(mode) => `body-empty ${mode === "empty" ? "" : "hidden"}`
+					(mode) => `body-empty ${mode === "empty" ? "" : "hidden"}`,
 				)}
 			>
 				{use(this.emptyMessage)}
 			</div>
 			<img
 				class={mode.map(
-					(mode) => `body-media ${mode === "image" ? "" : "hidden"}`
+					(mode) => `body-media ${mode === "image" ? "" : "hidden"}`,
 				)}
 				src={mediaUrl}
 				alt="Response preview"
 			/>
 			<video
 				class={mode.map(
-					(mode) => `body-media ${mode === "video" ? "" : "hidden"}`
+					(mode) => `body-media ${mode === "video" ? "" : "hidden"}`,
 				)}
 				src={mediaUrl}
 				controls
 			/>
 			<div
 				class={mode.map(
-					(mode) => `body-editor ${mode === "code" ? "" : "hidden"}`
+					(mode) => `body-editor ${mode === "code" ? "" : "hidden"}`,
 				)}
 			>
 				<div
 					class={largeText.map(
-						(largeText) => `body-large-preview ${largeText ? "" : "hidden"}`
+						(largeText) => `body-large-preview ${largeText ? "" : "hidden"}`,
 					)}
 				>
 					<div class="body-large-meta">{previewSummary}</div>
 					<pre class="body-large-text">{previewValue}</pre>
 					<button
 						class={loadedFullText.map(
-							(loaded) => `body-load-button ${loaded ? "hidden" : ""}`
+							(loaded) => `body-load-button ${loaded ? "hidden" : ""}`,
 						)}
 						on:click={() => {
 							this.expanded = true;
@@ -262,13 +262,13 @@ const StableBodyViewer: Component<
 						.zip(loadedFullText)
 						.map(
 							([mode, loaded]) =>
-								`body-monaco ${mode === "code" && loaded ? "" : "hidden"}`
+								`body-monaco ${mode === "code" && loaded ? "" : "hidden"}`,
 						)}
 				>
 					<Monaco
 						value={value}
 						language={use(this.language).map(
-							(language) => language ?? "plaintext"
+							(language) => language ?? "plaintext",
 						)}
 						readOnly={true}
 						minHeight={320}
@@ -373,7 +373,7 @@ const HeadersTable: Component<
 							<span class="header-value">{value}</span>
 						</div>
 					))
-				)
+				),
 			)}
 		</div>
 	);
@@ -431,7 +431,7 @@ const RequestCard: Component<
 	return (
 		<div
 			class={use(this.selected).map(
-				(selected) => `request-row ${selected ? "selected" : ""}`
+				(selected) => `request-row ${selected ? "selected" : ""}`,
 			)}
 			data-request-id={this.request.id}
 			data-status={this.request.status ?? ""}
@@ -633,11 +633,11 @@ const RequestViewer: Component<
 		if (!listEl) return;
 
 		const rows = Array.from(
-			listEl.querySelectorAll<HTMLElement>("[data-request-id]")
+			listEl.querySelectorAll<HTMLElement>("[data-request-id]"),
 		);
 		const firstVisible =
 			rows.find(
-				(row) => row.offsetTop + row.offsetHeight > listEl.scrollTop + 1
+				(row) => row.offsetTop + row.offsetHeight > listEl.scrollTop + 1,
 			) ?? rows[0];
 
 		this.listAnchor = {
@@ -670,7 +670,7 @@ const RequestViewer: Component<
 			}
 
 			const anchorEl = listEl.querySelector<HTMLElement>(
-				`[data-request-id="${anchor.id}"]`
+				`[data-request-id="${anchor.id}"]`,
 			);
 			if (anchorEl) {
 				listEl.scrollTop = anchorEl.offsetTop - anchor.offset;
@@ -680,7 +680,7 @@ const RequestViewer: Component<
 	};
 
 	const updateRequests = (
-		updater: (prev: RequestEntry[]) => RequestEntry[]
+		updater: (prev: RequestEntry[]) => RequestEntry[],
 	) => {
 		const previousUpdater = this.pendingRequestsUpdater;
 		this.pendingRequestsUpdater = previousUpdater
@@ -720,42 +720,42 @@ const RequestViewer: Component<
 			if (this.selectedRequest !== nextSelected) {
 				this.selectedRequest = nextSelected;
 			}
-		}
+		},
 	);
 
 	const hasSelected = use(this.selectedRequest).map((selected) => !!selected);
 	const selectedUrl = use(this.selectedRequest).map(
-		(selected) => selected?.url ?? ""
+		(selected) => selected?.url ?? "",
 	);
 	const selectedMethod = use(this.selectedRequest).map(
-		(selected) => selected?.method ?? ""
+		(selected) => selected?.method ?? "",
 	);
 	const selectedStatus = use(this.selectedRequest).map((selected) =>
 		selected
 			? `${selected.status ?? "…"} ${selected.statusText ?? ""}`.trim()
-			: ""
+			: "",
 	);
 	const selectedDuration = use(this.selectedRequest).map((selected) =>
-		selected?.durationMs !== undefined ? `${selected.durationMs}ms` : "…"
+		selected?.durationMs !== undefined ? `${selected.durationMs}ms` : "…",
 	);
 	const selectedDestination = use(this.selectedRequest).map(
-		(selected) => selected?.destination ?? "unknown"
+		(selected) => selected?.destination ?? "unknown",
 	);
 	const selectedMode = use(this.selectedRequest).map(
-		(selected) => selected?.mode ?? "unknown"
+		(selected) => selected?.mode ?? "unknown",
 	);
 	const selectedContentType = use(this.selectedRequest).map(
-		(selected) => selected?.contentType ?? "unknown"
+		(selected) => selected?.contentType ?? "unknown",
 	);
 	const responseHeaders = use(
 		this.selectedRequest,
-		this.responseHeadersView
+		this.responseHeadersView,
 	).map(([selected, view]) =>
 		!selected
 			? []
 			: view === "pre"
 				? (selected.responseHeadersPre ?? [])
-				: (selected.responseHeaders ?? [])
+				: (selected.responseHeaders ?? []),
 	);
 	const requestHeaders = use(this.selectedRequest, this.requestHeadersView).map(
 		([selected, view]) =>
@@ -763,36 +763,36 @@ const RequestViewer: Component<
 				? []
 				: view === "pre"
 					? (selected.requestHeadersPre ?? [])
-					: (selected.requestHeaders ?? [])
+					: (selected.requestHeaders ?? []),
 	);
 	const responseBodyValue = use(
 		this.selectedRequest,
-		this.responseBodyView
+		this.responseBodyView,
 	).map(([selected, view]) =>
 		!selected
 			? ""
 			: view === "pre"
 				? (selected.responseBodyPreviewPre ?? "")
-				: (selected.responseBodyPreview ?? "")
+				: (selected.responseBodyPreview ?? ""),
 	);
 	const responseBodyMediaUrl = use(
 		this.selectedRequest,
-		this.responseBodyView
+		this.responseBodyView,
 	).map(([selected, view]) =>
 		!selected
 			? undefined
 			: view === "pre"
 				? selected.responseBodyMediaUrlPre
-				: selected.responseBodyMediaUrl
+				: selected.responseBodyMediaUrl,
 	);
 	const responseBodyLanguage = use(this.selectedRequest).map((selected) =>
-		languageFromContentType(selected?.contentType)
+		languageFromContentType(selected?.contentType),
 	);
 	const responseBodyIsMedia = use(this.selectedRequest).map(
-		(selected) => !!selected && isMediaContentType(selected.contentType)
+		(selected) => !!selected && isMediaContentType(selected.contentType),
 	);
 	const responseBodyEmptyMessage = responseBodyIsMedia.map((isMedia) =>
-		isMedia ? "(media not captured)" : "(empty)"
+		isMedia ? "(media not captured)" : "(empty)",
 	);
 	const responseBodyMediaKind = use(this.selectedRequest).map((selected) => {
 		if (!selected || !isMediaContentType(selected.contentType)) return "none";
@@ -801,15 +801,15 @@ const RequestViewer: Component<
 			: "video";
 	});
 	const showRequestBody = use(this.selectedRequest).map(
-		(selected) => !!selected?.requestBodyPreview
+		(selected) => !!selected?.requestBodyPreview,
 	);
 	const requestBodyValue = use(this.selectedRequest).map(
-		(selected) => selected?.requestBodyPreview ?? ""
+		(selected) => selected?.requestBodyPreview ?? "",
 	);
 	const requestBodyLanguage = use(this.selectedRequest).map((selected) =>
 		languageFromContentType(
-			getHeaderValue(selected?.requestHeaders, "content-type")
-		)
+			getHeaderValue(selected?.requestHeaders, "content-type"),
+		),
 	);
 
 	const initPlugin = (frame: Frame) => {
@@ -822,11 +822,11 @@ const RequestViewer: Component<
 			this.requestIdByRequest.set(context.request as object, id);
 			this.requestStartByRequest.set(
 				context.request as object,
-				performance.now()
+				performance.now(),
 			);
 			const reqHeaders = normalizeHeaders(props.init?.headers);
 			const reqHeadersPre = normalizeHeaders(
-				context.request.initialHeaders.toRawHeaders()
+				context.request.initialHeaders.toRawHeaders(),
 			);
 			const reqBodyInfo = getBodyPreview(props.init?.body);
 
@@ -881,7 +881,7 @@ const RequestViewer: Component<
 				} else {
 					const media = getMediaUrlFromBody(
 						inspectedResponse?.body,
-						preContentType
+						preContentType,
 					);
 					preMediaUrl = media.url;
 					preBodyInfo = media.url
@@ -912,9 +912,9 @@ const RequestViewer: Component<
 							this.selectedRequest = nextEntry;
 						}
 						return nextEntry;
-					})
+					}),
 				);
-			}
+			},
 		);
 
 		plugin.tap(frame.hooks.fetch.response, async (context: any, props: any) => {
@@ -994,7 +994,7 @@ const RequestViewer: Component<
 						this.selectedRequest = nextEntry;
 					}
 					return nextEntry;
-				})
+				}),
 			);
 		});
 	};
@@ -1002,7 +1002,7 @@ const RequestViewer: Component<
 		([active, frame]) => {
 			if (active) initPlugin(frame);
 			return active;
-		}
+		},
 	);
 
 	return (
@@ -1072,25 +1072,25 @@ const RequestViewer: Component<
 								<RequestCard
 									request={req}
 									selected={use(this.selectedId).map(
-										(selectedId) => selectedId === req.id
+										(selectedId) => selectedId === req.id,
 									)}
 									onSelect={select}
 								/>
 							));
-						}
+						},
 					)}
 				</div>
 				<div class="requests-detail">
 					<div
 						class={hasSelected.map(
-							(hasSelected) => `requests-empty ${hasSelected ? "hidden" : ""}`
+							(hasSelected) => `requests-empty ${hasSelected ? "hidden" : ""}`,
 						)}
 					>
 						Select a request to see details.
 					</div>
 					<div
 						class={hasSelected.map(
-							(hasSelected) => `detail-panel ${hasSelected ? "" : "hidden"}`
+							(hasSelected) => `detail-panel ${hasSelected ? "" : "hidden"}`,
 						)}
 					>
 						<details class="detail-section" open>
@@ -1135,7 +1135,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.responseHeadersView).map(
 											(view) =>
-												`toggle-button ${view === "post" ? "active" : ""}`
+												`toggle-button ${view === "post" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1148,7 +1148,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.responseHeadersView).map(
 											(view) =>
-												`toggle-button ${view === "pre" ? "active" : ""}`
+												`toggle-button ${view === "pre" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1171,7 +1171,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.requestHeadersView).map(
 											(view) =>
-												`toggle-button ${view === "post" ? "active" : ""}`
+												`toggle-button ${view === "post" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1184,7 +1184,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.requestHeadersView).map(
 											(view) =>
-												`toggle-button ${view === "pre" ? "active" : ""}`
+												`toggle-button ${view === "pre" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1207,7 +1207,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.responseBodyView).map(
 											(view) =>
-												`toggle-button ${view === "post" ? "active" : ""}`
+												`toggle-button ${view === "post" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1220,7 +1220,7 @@ const RequestViewer: Component<
 									<button
 										class={use(this.responseBodyView).map(
 											(view) =>
-												`toggle-button ${view === "pre" ? "active" : ""}`
+												`toggle-button ${view === "pre" ? "active" : ""}`,
 										)}
 										on:click={(e: MouseEvent) => {
 											e.preventDefault();
@@ -1253,7 +1253,7 @@ const RequestViewer: Component<
 										/>
 									</div>
 								</details>
-							) : null
+							) : null,
 						)}
 					</div>
 				</div>

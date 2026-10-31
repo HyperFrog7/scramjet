@@ -1,8 +1,8 @@
-import { versionInfo } from "@mercuryworkshop/scramjet";
+import { versionInfo } from "driftproxy";
 import { assertDependencyVersions } from "./version";
 
 export { versionInfo };
-export { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
+export { ManagedPlugin } from "driftproxy-controller";
 export {
 	HttpCachePlugin,
 	CACHE_NAME,

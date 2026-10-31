@@ -29,17 +29,17 @@ async function project() {
 	const program = new Command();
 	program.name("Create Proxy");
 	program.description(
-		"A CLI to easily get started with creating a Scramjet or Ultraviolet Proxy"
+		"A CLI to easily get started with creating a Drift Proxy or Ultraviolet proxy",
 	);
 	program.argument(
 		"[dir]",
-		"The name of the program, and the directory to create"
+		"The name of the program, and the directory to create",
 	);
 	program.option("--git", "Tell the CLI to create a Git repository", false);
 	program.option("--install", "Tell the CLI to install dependencies", false);
 	program.option(
 		"-y, --default",
-		"Skip any questions a bootstrap with default options"
+		"Skip any questions a bootstrap with default options",
 	);
 	program.parse(process.argv);
 	program.args[0] ? (cliResults.dir = program.args[0]) : void 0;
@@ -48,7 +48,7 @@ async function project() {
 		const defaultOptSpinner = prompt.spinner();
 		defaultOptSpinner.start();
 		defaultOptSpinner.message(
-			chalk.yellow("Scaffolding using ALL default options")
+			chalk.yellow("Scaffolding using ALL default options"),
 		);
 		await scaffold({
 			projectName: cliResults.dir,
@@ -57,7 +57,7 @@ async function project() {
 		defaultOptSpinner.stop(chalk.green.bold("Scaffold complete!"));
 		return prompt.note(
 			`cd ${cliResults.dir} \nnpm run dev`,
-			chalk.bold.magenta("Done creating. Now run:")
+			chalk.bold.magenta("Done creating. Now run:"),
 		);
 	}
 
@@ -67,7 +67,7 @@ async function project() {
 				path: () =>
 					prompt.text({
 						message: chalk.green(
-							"Where would you like to create your project?"
+							"Where would you like to create your project?",
 						),
 						placeholder: "project-name",
 					}),
@@ -92,7 +92,7 @@ async function project() {
 				prompt.cancel(chalk.bold.red("Operation canceled"));
 				process.exit(0);
 			},
-		}
+		},
 	);
 
 	const initGit = await prompt.group(
@@ -110,7 +110,7 @@ async function project() {
 				prompt.cancel(chalk.bold.red("Operation canceled"));
 				process.exit(0);
 			},
-		}
+		},
 	);
 
 	const installDeps = await prompt.group(
@@ -128,7 +128,7 @@ async function project() {
 				prompt.cancel(chalk.bold.red("Operation canceled"));
 				process.exit(0);
 			},
-		}
+		},
 	);
 
 	let packageManager = "npm";
@@ -153,7 +153,7 @@ async function project() {
 					prompt.cancel(chalk.bold.red("Operation canceled"));
 					process.exit(0);
 				},
-			}
+			},
 		);
 		packageManager = pm.manager;
 	}
@@ -181,7 +181,7 @@ async function project() {
 					"Initial Commit from Create Proxy App",
 					'--author="create-proxy-app[bot] <cpa@mercurywork.shop>"',
 				],
-				{ cwd: initial.path }
+				{ cwd: initial.path },
 			);
 		} catch (err: any) {}
 		gitSpinner.stop(chalk.bold.green("Git repo successfully initialized!"));
@@ -195,8 +195,8 @@ async function project() {
 		} catch (err: any) {
 			console.log(
 				chalk.yellow.bold(
-					`\n${packageManager} has failed to install dependencies. Defaulting to npm`
-				)
+					`\n${packageManager} has failed to install dependencies. Defaulting to npm`,
+				),
 			);
 			packageManager = "npm";
 			await execa("npm", ["install"], { cwd: initial.path });
@@ -207,7 +207,7 @@ async function project() {
 		case true:
 			prompt.note(
 				`cd ${initial.path ?? providedName} \n${packageManager} run dev`,
-				chalk.bold.magenta("Done creating. Now run:")
+				chalk.bold.magenta("Done creating. Now run:"),
 			);
 			break;
 		case false:
@@ -215,7 +215,7 @@ async function project() {
 				`cd ${
 					initial.path ?? providedName
 				} \n${packageManager} install \n${packageManager} run dev`,
-				chalk.bold.magenta("Done creating. Now run:")
+				chalk.bold.magenta("Done creating. Now run:"),
 			);
 			break;
 	}
@@ -230,14 +230,14 @@ async function project() {
 		spinner.stop(chalk.bold.green("Scaffold complete!"));
 		prompt.note(
 			`cd ${initial.path} \nAnd get to work!`,
-			chalk.bold.magenta("Done. Now Do:")
+			chalk.bold.magenta("Done. Now Do:"),
 		);
 	}
 }
 
 async function cli() {
 	prompt.intro(
-		chalk.magenta("Welcome to Create Proxy App CLI! Let's get started")
+		chalk.magenta("Welcome to Create Proxy App CLI! Let's get started"),
 	);
 	await project();
 }

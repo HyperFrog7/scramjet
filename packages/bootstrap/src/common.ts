@@ -1,11 +1,10 @@
 export const REGISTRY_URL = "https://registry.npmjs.org/";
-export const SCRAMJET_PACKAGE_NAME = "@mercuryworkshop/scramjet";
+export const SCRAMJET_PACKAGE_NAME = "driftproxy";
 
-export const SCRAMJET_CONTROLLER_PACKAGE_NAME =
-	"@mercuryworkshop/scramjet-controller";
+export const SCRAMJET_CONTROLLER_PACKAGE_NAME = "driftproxy-controller";
 export const SCRAMJET_CONTROLLER_PINNED_MAJOR_VERSION = "0";
 
-export const SCRAMJET_UTILS_PACKAGE_NAME = "@mercuryworkshop/scramjet-utils";
+export const SCRAMJET_UTILS_PACKAGE_NAME = "driftproxy-utils";
 export const SCRAMJET_UTILS_PINNED_MAJOR_VERSION = "0";
 
 export const EPOXY_TRANSPORT_PACKAGE_NAME = "@mercuryworkshop/epoxy-transport";

@@ -3,7 +3,7 @@ import { BootstrapOptions } from "./common";
 import type { ProxyTransport } from "@mercuryworkshop/proxy-transports";
 import type EpoxyClient from "@mercuryworkshop/epoxy-transport";
 import type LibcurlClient from "@mercuryworkshop/libcurl-transport";
-import * as ControllerApi from "@mercuryworkshop/scramjet-controller";
+import * as ControllerApi from "driftproxy-controller";
 
 export async function init(cfg: BootstrapOptions) {
 	const sw = await registerSw(cfg.swPath);

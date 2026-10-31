@@ -1,0 +1,47 @@
+Drift Proxy
+===========
+
+Copyright (C) 2024-2026 Mercury Workshop and the Scramjet contributors
+Copyright (C) 2026 Drift Proxy contributors
+
+This product is a fork of Scramjet, originally developed by Mercury Workshop
+and its contributors:
+
+    https://github.com/MercuryWorkshop/scramjet
+
+The upstream project is licensed under the GNU Affero General Public License,
+version 3. This fork is distributed under the same license; see LICENSE.
+
+Modifications
+-------------
+
+This fork has been modified from the upstream project, including renaming of
+the distributed packages to the `driftproxy` family. Changes are tracked in the
+version control history of this repository, which is the "relevant date"
+required by AGPL-3.0 section 5(a).
+
+Compatibility note
+------------------
+
+The `$scramjet$`-prefixed globals, `scramjet-` DOM attribute names, and the
+`scramjet.js` build artifact filenames are retained as an internal interface
+between the JavaScript client, the WebAssembly rewriter, and downstream
+integrators that configure `globals` explicitly. They are historical names and
+do not indicate affiliation with the upstream project.
+
+Third-party components
+----------------------
+
+This software depends on independently maintained projects that are not part of
+this fork, including `@mercuryworkshop/proxy-transports`,
+`@mercuryworkshop/libcurl-transport`, `@mercuryworkshop/epoxy-transport`, and
+`@mercuryworkshop/wisp-js`. Those remain the property of their respective
+authors under their own licenses.
+
+Trademarks
+----------
+
+"Scramjet" and any associated marks belong to their respective owners. This
+fork is not endorsed by or affiliated with Mercury Workshop. The name "Drift
+Proxy" does not claim any rights over the mark "Drift", which belongs to its
+respective owner.

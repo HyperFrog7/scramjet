@@ -1,7 +1,16 @@
+node_modules
+dist
 pnpm-lock.yaml
-dist/
-rewriter/
-frontend/public/chi
-chii/
-chobitsu/
-playwright/
+
+packages/core/rewriter/target
+packages/core/rewriter/wasm/out
+packages/core/bench/.out
+packages/core/bench/corpus/real
+
+# upstream WPT fixtures, copied verbatim (some are not parseable as HTML)
+packages/runway/src/tests/wpt/vendored
+
+# rewriter test fixtures and sample corpus: reformatting changes their input
+packages/core/rewriter/native/sample
+packages/core/rewriter/native/tests
+packages/core/rewriter/native/test.js

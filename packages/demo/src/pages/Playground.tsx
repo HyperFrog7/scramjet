@@ -1,5 +1,5 @@
 import { css, type Component } from "dreamland/core";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import type { Frame } from "driftproxy-controller";
 import {
 	BareResponse,
 	Plugin,
@@ -7,7 +7,7 @@ import {
 	ScramjetFetchHandler,
 	ScramjetHeaders,
 	type ScramjetFetchRequest,
-} from "@mercuryworkshop/scramjet";
+} from "driftproxy";
 import { cachePlugin, controller } from "..";
 import Monaco from "../components/Monaco";
 
@@ -89,7 +89,7 @@ if (button && out) {
 ];
 
 const DEFAULT_FILE_MAP = Object.fromEntries(
-	DEFAULT_FILES.map((file) => [file.path, file.content])
+	DEFAULT_FILES.map((file) => [file.path, file.content]),
 );
 
 const loadProjects = (): PlaygroundProject[] => {
@@ -262,14 +262,14 @@ const PlaygroundView: Component<
 	}
 
 	const updateProjects = (
-		updater: (projects: PlaygroundProject[]) => PlaygroundProject[]
+		updater: (projects: PlaygroundProject[]) => PlaygroundProject[],
 	) => {
 		this.projects = updater(this.projects);
 		saveProjects(this.projects);
 	};
 
 	const updateActiveFiles = (
-		updater: (files: Record<string, string>) => Record<string, string>
+		updater: (files: Record<string, string>) => Record<string, string>,
 	) => {
 		const active = getActiveProject();
 		if (!active) return;
@@ -277,8 +277,8 @@ const PlaygroundView: Component<
 			projects.map((project) =>
 				project.id === active.id
 					? { ...project, files: updater(project.files) }
-					: project
-			)
+					: project,
+			),
 		);
 	};
 
@@ -310,7 +310,7 @@ const PlaygroundView: Component<
 		this.editorSplit = startSplit;
 		container.style.setProperty(
 			"--editor-pct",
-			`${(startSplit * 100).toFixed(2)}%`
+			`${(startSplit * 100).toFixed(2)}%`,
 		);
 
 		const onMove = (moveEvent: MouseEvent) => {
@@ -318,7 +318,7 @@ const PlaygroundView: Component<
 			this.editorSplit = split;
 			container.style.setProperty(
 				"--editor-pct",
-				`${(split * 100).toFixed(2)}%`
+				`${(split * 100).toFixed(2)}%`,
 			);
 		};
 
@@ -362,7 +362,7 @@ const PlaygroundView: Component<
 							"content-type": "text/plain; charset=utf-8",
 							"cache-control": "no-store",
 						},
-					}
+					},
 				);
 				return;
 			}
@@ -376,7 +376,7 @@ const PlaygroundView: Component<
 						"content-type": contentTypeFromPath(filePath),
 						"cache-control": "no-store",
 					},
-				}
+				},
 			);
 		});
 	};
@@ -386,7 +386,7 @@ const PlaygroundView: Component<
 		try {
 			const normalized = normalizePreviewUrl(
 				targetUrl ?? this.previewUrlInput,
-				this.origin
+				this.origin,
 			);
 			this.previewUrl = normalized;
 			this.previewUrlInput = normalized;
@@ -464,7 +464,7 @@ const PlaygroundView: Component<
 							"content-type": ct,
 							"cache-control": "no-store",
 						},
-					})
+					}),
 				);
 
 			const targetUrl = `${this.origin}${filePath}`;
@@ -497,7 +497,7 @@ const PlaygroundView: Component<
 			};
 
 			const rewritten = await handler.handleFetch(
-				request as ScramjetFetchRequest
+				request as ScramjetFetchRequest,
 			);
 			handler.client.fetch = originalFetch;
 
@@ -520,13 +520,13 @@ const PlaygroundView: Component<
 				}
 			}
 			return active;
-		}
+		},
 	);
 
 	return (
 		<div
 			class={use(this.isResizing).map((dragging) =>
-				dragging ? "playground-view resizing" : "playground-view"
+				dragging ? "playground-view resizing" : "playground-view",
 			)}
 			style={`--editor-pct: ${(this.editorSplit * 100).toFixed(2)}%;`}
 		>
@@ -539,7 +539,7 @@ const PlaygroundView: Component<
 							([projects, selectedProjectId, selectedFile]) => {
 								const activeProject =
 									projects.find(
-										(project) => project.id === selectedProjectId
+										(project) => project.id === selectedProjectId,
 									) ?? projects[0];
 								const files = activeProject?.files ?? {};
 
@@ -569,7 +569,7 @@ const PlaygroundView: Component<
 																		e.preventDefault();
 																		e.stopPropagation();
 																		const next = normalizeFilePath(
-																			prompt("Rename file", path) || ""
+																			prompt("Rename file", path) || "",
 																		);
 																		if (!next || next === path || next in files)
 																			return;
@@ -624,7 +624,7 @@ const PlaygroundView: Component<
 												class="file-item file-new"
 												on:click={() => {
 													const next = normalizeFilePath(
-														prompt("New file path", "/new-file.txt") || ""
+														prompt("New file path", "/new-file.txt") || "",
 													);
 													if (!next || next in files) return;
 													updateActiveFiles((current) => ({
@@ -675,7 +675,7 @@ const PlaygroundView: Component<
 																this.selectedProjectId = project.id;
 																const paths = Object.keys(project.files).sort();
 																this.selectedFile = paths.includes(
-																	this.selectedFile
+																	this.selectedFile,
 																)
 																	? this.selectedFile
 																	: (paths[0] ?? "/index.html");
@@ -697,8 +697,8 @@ const PlaygroundView: Component<
 																	current.map((item) =>
 																		item.id === project.id
 																			? { ...item, name: next }
-																			: item
-																	)
+																			: item,
+																	),
 																);
 															}}
 															title="Rename project"
@@ -715,13 +715,13 @@ const PlaygroundView: Component<
 																e.stopPropagation();
 																if (projects.length <= 1) return;
 																const remaining = projects.filter(
-																	(item) => item.id !== project.id
+																	(item) => item.id !== project.id,
 																);
 																const nextProject = remaining[0];
 																updateProjects((current) =>
 																	current.filter(
-																		(item) => item.id !== project.id
-																	)
+																		(item) => item.id !== project.id,
+																	),
 																);
 																if (
 																	this.selectedProjectId === project.id &&
@@ -745,7 +745,7 @@ const PlaygroundView: Component<
 										</div>
 									</div>
 								);
-							}
+							},
 						)}
 					</div>
 					<div class="editor-pane">
@@ -756,16 +756,16 @@ const PlaygroundView: Component<
 							value={use(
 								this.selectedFile,
 								this.projects,
-								this.selectedProjectId
+								this.selectedProjectId,
 							).map(([selected, projects, selectedProjectId]) => {
 								const active =
 									projects.find(
-										(project) => project.id === selectedProjectId
+										(project) => project.id === selectedProjectId,
 									) ?? projects[0];
 								return active?.files[selected] ?? "";
 							})}
 							language={use(this.selectedFile).map((selected) =>
-								languageFromPath(selected)
+								languageFromPath(selected),
 							)}
 							readOnly={false}
 							fill={true}
@@ -794,7 +794,7 @@ const PlaygroundView: Component<
 					<button
 						type="button"
 						class={use(this.previewMode).map(
-							(m) => `preview-tab ${m === "iframe" ? "active" : ""}`
+							(m) => `preview-tab ${m === "iframe" ? "active" : ""}`,
 						)}
 						on:click={() => {
 							this.previewMode = "iframe";
@@ -805,7 +805,7 @@ const PlaygroundView: Component<
 					<button
 						type="button"
 						class={use(this.previewMode).map(
-							(m) => `preview-tab ${m === "rewritten" ? "active" : ""}`
+							(m) => `preview-tab ${m === "rewritten" ? "active" : ""}`,
 						)}
 						on:click={() => {
 							this.previewMode = "rewritten";
@@ -853,7 +853,7 @@ const PlaygroundView: Component<
 									placeholder="Enter URL or search..."
 								/>
 							</div>
-						</form>
+						</form>,
 					)}
 				{use(this.previewMode)
 					.map((mode) => mode === "rewritten")
@@ -861,7 +861,7 @@ const PlaygroundView: Component<
 						<div class="rewrite-meta">
 							<span class="rewrite-meta-file">
 								{use(this.rewriteFile).map((p) =>
-									p ? displayFilePath(p) : ""
+									p ? displayFilePath(p) : "",
 								)}
 							</span>
 							{use(this.selectedFile)
@@ -878,7 +878,7 @@ const PlaygroundView: Component<
 											}}
 										/>
 										Module
-									</label>
+									</label>,
 								)}
 							<button
 								type="button"
@@ -894,29 +894,29 @@ const PlaygroundView: Component<
 							<span class="rewrite-meta-ct">
 								{use(this.rewrittenContentType).map((ct) => ct || "")}
 							</span>
-						</div>
+						</div>,
 					)}
 				<div
 					class={use(this.previewMode).map(
-						(m) => `preview-body preview-body-${m}`
+						(m) => `preview-body preview-body-${m}`,
 					)}
 				>
 					<div
 						class={use(this.previewMode).map(
-							(m) => `preview-frame ${m === "iframe" ? "active" : "hidden"}`
+							(m) => `preview-frame ${m === "iframe" ? "active" : "hidden"}`,
 						)}
 					>
 						{use(this.frame).map((f) => f?.element)}
 					</div>
 					<div
 						class={use(this.previewMode).map(
-							(m) => `rewrite-pane ${m === "rewritten" ? "active" : "hidden"}`
+							(m) => `rewrite-pane ${m === "rewritten" ? "active" : "hidden"}`,
 						)}
 					>
 						<Monaco
 							value={use(this.rewrittenBody)}
 							language={use(this.rewriteFile, this.rewrittenContentType).map(
-								([file]) => languageFromPath(file)
+								([file]) => languageFromPath(file),
 							)}
 							readOnly={true}
 							fill={true}

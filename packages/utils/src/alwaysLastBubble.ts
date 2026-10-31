@@ -1,8 +1,8 @@
-import type { ScramjetClient } from "@mercuryworkshop/scramjet";
+import type { ScramjetClient } from "driftproxy";
 
 export function setupAlwaysLastBubble(
 	client: ScramjetClient,
-	whatToCapture: string[]
+	whatToCapture: string[],
 ) {
 	// goal is to override the default behavior of clicking on an <a> link
 	// if the link is target=_blank it needs to open in a new browser.js tab instead of a native tab
@@ -77,7 +77,7 @@ export function setupAlwaysLastBubble(
 	return function addAlwaysLastEventListener<T extends Event>(
 		target: EventTarget,
 		eventName: string,
-		listener: (e: T) => void
+		listener: (e: T) => void,
 	) {
 		// this event will always run before all other ones, since it was registered at injectHistoryEmulation
 		// * unless you registered the event before appending to the dom
@@ -129,7 +129,7 @@ export function setupAlwaysLastBubble(
 					apply() {
 						if (!currentlyExecutingDesc)
 							throw new Error(
-								"stopImmediatePropagation called but no desc found?"
+								"stopImmediatePropagation called but no desc found?",
 							);
 						// for stopImmediatePropagation this is the last one
 						currentlyExecutingDesc.injectafter = (e) => {
@@ -162,7 +162,7 @@ export function setupAlwaysLastBubble(
 						}
 					},
 				});
-			}
+			},
 		);
 	};
 }

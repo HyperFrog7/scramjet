@@ -47,9 +47,9 @@ import {
 	BareResponse,
 	type ScramjetFetchRequest,
 	type ScramjetHeaders,
-} from "@mercuryworkshop/scramjet";
-import { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+} from "driftproxy";
+import { ManagedPlugin } from "driftproxy-controller";
+import type { Frame } from "driftproxy-controller";
 
 export const CACHE_NAME = "scramjet-http-cache-v2";
 
@@ -125,7 +125,7 @@ function parseCacheControl(value: string | null): CacheControlDirectives {
 function freshnessLifetimeSeconds(
 	headers: Headers,
 	cc: CacheControlDirectives,
-	dateMs: number
+	dateMs: number,
 ): number | null {
 	if (cc["s-maxage"] !== undefined) return cc["s-maxage"];
 	if (cc["max-age"] !== undefined) return cc["max-age"];
@@ -170,7 +170,7 @@ function isCacheableMethod(method: string): boolean {
 function responseIsStorable(
 	status: number,
 	headers: Headers,
-	method: string
+	method: string,
 ): boolean {
 	if (!isCacheableMethod(method)) return false;
 	if (!DEFAULT_CACHEABLE_STATUSES.has(status)) return false;
@@ -188,7 +188,7 @@ function responseIsStorable(
 /** Build a synthetic cache-key Request keyed by the *underlying* URL. */
 function buildCacheKeyRequest(
 	parsedUrl: string,
-	headers: ScramjetHeaders
+	headers: ScramjetHeaders,
 ): Request {
 	const native = new Headers();
 	for (const [k, v] of headers.toRawHeaders()) {
@@ -203,7 +203,7 @@ function buildCacheKeyRequest(
 
 /** Rebuild a Headers object from the BareResponse's rawHeaders array. */
 function nativeHeadersFromRaw(
-	raw: ReadonlyArray<readonly [string, string]>
+	raw: ReadonlyArray<readonly [string, string]>,
 ): Headers {
 	const h = new Headers();
 	for (const [k, v] of raw) {
@@ -237,7 +237,7 @@ function strippedHeadersFromStored(stored: Response): Headers {
  * Returns the buffered bytes too so the caller can hand them off elsewhere.
  */
 async function rebuildBareResponseWithBuffer(
-	bare: BareResponse
+	bare: BareResponse,
 ): Promise<{ replacement: BareResponse; bodyBuffer: ArrayBuffer | null }> {
 	const status = bare.status;
 	const isNullBody = NULL_BODY_STATUSES.has(status);
@@ -251,7 +251,7 @@ async function rebuildBareResponseWithBuffer(
 					status,
 					statusText: bare.statusText,
 					headers,
-				})
+				}),
 			),
 			bodyBuffer: null,
 		};
@@ -264,7 +264,7 @@ async function rebuildBareResponseWithBuffer(
 				status,
 				statusText: bare.statusText,
 				headers,
-			})
+			}),
 		),
 		bodyBuffer: buf,
 	};
@@ -278,7 +278,7 @@ function buildStorableResponse(
 	body: ArrayBuffer | null,
 	status: number,
 	statusText: string,
-	rawHeaders: ReadonlyArray<readonly [string, string]>
+	rawHeaders: ReadonlyArray<readonly [string, string]>,
 ): Response {
 	const native = nativeHeadersFromRaw(rawHeaders);
 	native.set(STORED_AT_HEADER, String(Date.now()));
@@ -340,7 +340,7 @@ export class HttpCachePlugin extends ManagedPlugin {
 
 			const cache = await this.openCache();
 			const stored = await cache.match(
-				buildCacheKeyRequest(ctx.parsed.url.href, req.initialHeaders)
+				buildCacheKeyRequest(ctx.parsed.url.href, req.initialHeaders),
 			);
 			if (!stored) {
 				return;
@@ -348,7 +348,7 @@ export class HttpCachePlugin extends ManagedPlugin {
 
 			const storedAt = parseInt(
 				stored.headers.get(STORED_AT_HEADER) ?? "0",
-				10
+				10,
 			);
 			const cc = parseCacheControl(stored.headers.get("cache-control"));
 
@@ -403,7 +403,7 @@ export class HttpCachePlugin extends ManagedPlugin {
 					status: stored.status,
 					statusText: stored.statusText,
 					headers,
-				})
+				}),
 			);
 
 			this.cameFromCache.set(req, true);
@@ -431,19 +431,19 @@ export class HttpCachePlugin extends ManagedPlugin {
 			// Drain the stream once and rebuild the BareResponse around the
 			// buffered copy so the rest of doHandleFetch can still read it.
 			const { replacement, bodyBuffer } = await rebuildBareResponseWithBuffer(
-				props.response
+				props.response,
 			);
 			props.response = replacement;
 
 			const cacheKey = buildCacheKeyRequest(
 				ctx.parsed.url.href,
-				req.initialHeaders
+				req.initialHeaders,
 			);
 			const toStore = buildStorableResponse(
 				bodyBuffer,
 				props.response.status,
 				props.response.statusText,
-				props.response.rawHeaders
+				props.response.rawHeaders,
 			);
 
 			try {

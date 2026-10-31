@@ -1,17 +1,17 @@
 {
-	"name": "create-proxy-app",
+	"name": "create-driftproxy",
 	"version": "0.0.4",
-	"description": "Scaffold a Scramjet or Ultraviolet proxy app",
+	"description": "Scaffold a Drift Proxy or Ultraviolet proxy app",
 	"type": "module",
 	"packageManager": "pnpm@10.12.1",
 	"license": "AGPL-3.0-only",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/MercuryWorkshop/scramjet.git",
+		"url": "git+https://github.com/hyperfrog7/driftproxy.git",
 		"directory": "packages/create-proxy-app"
 	},
 	"bin": {
-		"create-proxy-app": "./dist/index.js"
+		"create-driftproxy": "./dist/index.js"
 	},
 	"files": [
 		"dist"

@@ -1,5 +1,5 @@
 {
-	"name": "@mercuryworkshop/scramjet",
+	"name": "driftproxy",
 	"version": "2.0.67-alpha.2",
 	"license": "AGPL-3.0-only",
 	"description": "An experimental web proxy that aims to be the successor to Ultraviolet",
@@ -14,8 +14,11 @@
 	"scripts": {
 		"build": "cd ../.. && rspack build --mode production",
 		"rewriter:build": "cd rewriter/wasm/ && bash build.sh && cd ../../",
+		"bench": "node bench/rewrite.mjs",
+		"bench:corpus": "node bench/fetch-corpus.mjs",
 		"format": "prettier --write .",
 		"lint": "eslint ./src/",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
 		"lint:fix": "eslint ./src/ --fix",
 		"prepack": "RELEASE=1 npm run rewriter:build && npm run build && cp ../../README.md ./README.md"
 	},

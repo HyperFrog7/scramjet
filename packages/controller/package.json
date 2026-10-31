@@ -1,5 +1,5 @@
 {
-	"name": "@mercuryworkshop/scramjet-controller",
+	"name": "driftproxy-controller",
 	"version": "0.0.14",
 	"type": "module",
 	"packageManager": "pnpm@10.12.1",
@@ -9,7 +9,7 @@
 	"types": "./dist/types/typesEntry.d.ts",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/MercuryWorkshop/scramjet.git",
+		"url": "https://github.com/hyperfrog7/driftproxy.git",
 		"directory": "packages/controller"
 	},
 	"scripts": {
@@ -23,15 +23,15 @@
 		}
 	},
 	"peerDependencies": {
-		"@mercuryworkshop/scramjet": "*"
+		"driftproxy": "*"
 	},
 	"dependencies": {
 		"@fastify/deepmerge": "^3.2.1",
 		"@mercuryworkshop/proxy-transports": "catalog:"
 	},
 	"devDependencies": {
-		"@mercuryworkshop/scramjet": "workspace:*",
+		"driftproxy": "workspace:*",
 		"@types/serviceworker": "^0.0.197",
-		"@mercuryworkshop/rpc": "workspace:*"
+		"driftproxy-rpc": "workspace:*"
 	}
 }

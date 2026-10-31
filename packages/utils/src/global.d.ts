@@ -1,7 +1,7 @@
-import type * as ScramjetController from "@mercuryworkshop/scramjet-controller";
+import type * as ScramjetController from "driftproxy-controller";
 
 declare global {
-	const $scramjet: typeof import("@mercuryworkshop/scramjet");
+	const $scramjet: typeof import("driftproxy");
 	const $scramjetController: typeof ScramjetController;
 }
 

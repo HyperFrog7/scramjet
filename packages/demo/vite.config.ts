@@ -6,11 +6,11 @@ export default {
 			structured: false,
 			targets: [
 				{
-					src: "node_modules/@mercuryworkshop/scramjet/dist/*",
+					src: "node_modules/driftproxy/dist/*",
 					dest: "scramjet",
 				},
 				{
-					src: "node_modules/@mercuryworkshop/scramjet-controller/dist/*",
+					src: "node_modules/driftproxy-controller/dist/*",
 					dest: "controller",
 				},
 			],

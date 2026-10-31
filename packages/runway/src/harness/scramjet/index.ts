@@ -17,19 +17,14 @@ export async function startHarness() {
 
 	app.use(
 		"/scramjet",
-		express.static(
-			path.join(packageRoot, "node_modules/@mercuryworkshop/scramjet/dist")
-		)
+		express.static(path.join(packageRoot, "node_modules/driftproxy/dist")),
 	);
 
 	app.use(
 		"/controller",
 		express.static(
-			path.join(
-				packageRoot,
-				"node_modules/@mercuryworkshop/scramjet-controller/dist"
-			)
-		)
+			path.join(packageRoot, "node_modules/driftproxy-controller/dist"),
+		),
 	);
 
 	app.use(
@@ -37,9 +32,9 @@ export async function startHarness() {
 		express.static(
 			path.join(
 				packageRoot,
-				"node_modules/@mercuryworkshop/libcurl-transport/dist"
-			)
-		)
+				"node_modules/@mercuryworkshop/libcurl-transport/dist",
+			),
+		),
 	);
 
 	app.use(express.static(path.join(__dirname, "public")));

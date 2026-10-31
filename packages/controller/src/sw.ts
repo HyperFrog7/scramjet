@@ -1,6 +1,6 @@
 /// <reference lib="WebWorker" />
 /// <reference types="@types/serviceworker" />
-import { RpcHelper } from "@mercuryworkshop/rpc";
+import { RpcHelper } from "driftproxy-rpc";
 import type { Controllerbound, SWbound } from "./types";
 import type { RawHeaders } from "@mercuryworkshop/proxy-transports";
 
@@ -29,7 +29,7 @@ addEventListener("message", (e) => {
 		const { port, prefix } = e.data.$sw$initRemoteTransport;
 
 		const relevantcontroller = tabs.find((tab) =>
-			new URL(prefix).pathname.startsWith(tab.prefix)
+			new URL(prefix).pathname.startsWith(tab.prefix),
 		);
 		if (!relevantcontroller) {
 			console.error("No relevant controller found for transport init");
@@ -45,7 +45,7 @@ class ControllerReference {
 	constructor(
 		public prefix: string,
 		public id: string,
-		port: MessagePort
+		port: MessagePort,
 	) {
 		this.rpc = new RpcHelper(
 			{
@@ -77,7 +77,7 @@ class ControllerReference {
 								new Promise<string>((resolve) => {
 									// Resolve with the id so we know which client replied.
 									cookieResolvers[id] = () => resolve(id);
-								})
+								}),
 							);
 						}
 					}
@@ -92,13 +92,13 @@ class ControllerReference {
 							timeoutId = setTimeout(() => {
 								if (!responded) {
 									const pending = ids.filter(
-										(id) => cookieResolvers[id] !== undefined
+										(id) => cookieResolvers[id] !== undefined,
 									);
 									console.error(
 										"timed out waiting for set cookie response (deadlock?): " +
 											`cookies=${cookies.length} clients=${clients.length} ` +
 											`pending=${pending.length}/${ids.length} ` +
-											`clientUrls=${clients.map((c) => c.url).join(",")}`
+											`clientUrls=${clients.map((c) => c.url).join(",")}`,
 									);
 								}
 								resolve();
@@ -130,7 +130,7 @@ class ControllerReference {
 			"tabchannel-" + id,
 			(data, transfer) => {
 				port.postMessage(data, transfer);
-			}
+			},
 		);
 		port.onmessage = (e: MessageEvent) => {
 			this.rpc.recieve(e.data);
@@ -191,7 +191,7 @@ export async function route(event: FetchEvent): Promise<Response> {
 				// @ts-expect-error the types for fetchevent are messed up
 				event.request.body instanceof ArrayBuffer
 				? [event.request.body]
-				: undefined
+				: undefined,
 		);
 
 		return new Response(response.body, {
@@ -205,7 +205,7 @@ export async function route(event: FetchEvent): Promise<Response> {
 			"Internal Service Worker Error: " + (e as Error).message,
 			{
 				status: 500,
-			}
+			},
 		);
 	}
 }

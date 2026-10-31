@@ -1,5 +1,5 @@
-import { ManagedPlugin } from "@mercuryworkshop/scramjet-controller";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import { ManagedPlugin } from "driftproxy-controller";
+import type { Frame } from "driftproxy-controller";
 import {
 	setupAlwaysLastBubble,
 	type AddAlwaysLastEventListener,
@@ -32,7 +32,7 @@ export class EventHandlerPlugin extends ManagedPlugin {
 		this.tap(frame.hooks.init.post, (context) => {
 			this.addAlwaysLastEventListeners.set(
 				context.window,
-				setupAlwaysLastBubble(context.client, this.eventsToCapture)
+				setupAlwaysLastBubble(context.client, this.eventsToCapture),
 			);
 		});
 	}
@@ -67,7 +67,7 @@ export class EventHandlerPlugin extends ManagedPlugin {
 	addEventListener<T extends Event>(
 		target: EventTarget,
 		eventName: string,
-		listener: (e: T) => void
+		listener: (e: T) => void,
 	): void {
 		const window = this.getWindow(target);
 		if (!window) {
@@ -78,7 +78,7 @@ export class EventHandlerPlugin extends ManagedPlugin {
 			this.addAlwaysLastEventListeners.get(window);
 		if (!addAlwaysLastEventListener) {
 			throw new Error(
-				"somehow the realm of the target never had addAlwaysLastEventListener installed"
+				"somehow the realm of the target never had addAlwaysLastEventListener installed",
 			);
 		}
 		addAlwaysLastEventListener(target, eventName, listener);

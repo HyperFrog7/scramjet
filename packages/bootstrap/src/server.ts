@@ -30,18 +30,18 @@ let config: ServerBootstrapOptions;
 async function sendFile(
 	res: http.ServerResponse,
 	filePath: string,
-	contentType: string
+	contentType: string,
 ) {
 	const data = await fs.readFile(filePath);
 	res.writeHead(200, { "Content-Type": contentType });
 	res.end(data);
 }
 const clientdata = await fs.readFile(
-	join(bootstrapRoot, "bootstrap-client.js")
+	join(bootstrapRoot, "bootstrap-client.js"),
 );
 function routeRequest(
 	req: http.IncomingMessage,
-	res: http.ServerResponse
+	res: http.ServerResponse,
 ): boolean {
 	if (!req.url) return false;
 
@@ -100,7 +100,7 @@ addEventListener("fetch", (e) => {
 function routeUpgrade(
 	req: http.IncomingMessage,
 	socket: any,
-	head: Buffer
+	head: Buffer,
 ): boolean {
 	if (!req.url) return false;
 	if (!req.url.startsWith("/wisp/")) return false;
@@ -144,15 +144,15 @@ export async function unpack(tarball: string, name: string) {
 }
 
 async function getDownloadedPackageVersion(
-	name: string
+	name: string,
 ): Promise<string | null> {
 	const packagedir = `${config.downloadedFilesDir}${name}`;
 	try {
 		const pkgJson = JSON.parse(
 			(await fs.readFile(
 				`${packagedir}/package/package.json`,
-				"utf-8"
-			)) as unknown as string
+				"utf-8",
+			)) as unknown as string,
 		);
 		return pkgJson.version;
 	} catch {
@@ -161,12 +161,11 @@ async function getDownloadedPackageVersion(
 }
 
 async function updateScramjet(controllerMeta: any) {
-	const scramjetVersion =
-		controllerMeta.devDependencies["@mercuryworkshop/scramjet"];
+	const scramjetVersion = controllerMeta.devDependencies["driftproxy"];
 
 	console.log(`Fetching scramjet version: ${scramjetVersion}`);
 	const scramjetRes = await fetch(
-		`${REGISTRY_URL}${SCRAMJET_PACKAGE_NAME}/${scramjetVersion}`
+		`${REGISTRY_URL}${SCRAMJET_PACKAGE_NAME}/${scramjetVersion}`,
 	);
 	const scramjetMeta = await scramjetRes.json();
 
@@ -176,12 +175,12 @@ async function updateScramjet(controllerMeta: any) {
 
 export async function findLatestVersionOfPackage(
 	packageName: string,
-	majorVersion: string
+	majorVersion: string,
 ): Promise<NodePackageMeta> {
 	const packageRes = await fetch(`${REGISTRY_URL}${packageName}`);
 	const packageMeta = await packageRes.json();
 	const versions = Object.keys(packageMeta.versions).filter((v) =>
-		v.startsWith(`${majorVersion}.`)
+		v.startsWith(`${majorVersion}.`),
 	);
 	const sortedVersions = versions.sort((a, b) => {
 		const aParts = a.split(".").map(Number);
@@ -195,13 +194,13 @@ export async function findLatestVersionOfPackage(
 	});
 	if (sortedVersions.length === 0) {
 		throw new Error(
-			`No versions found for package ${packageName} with major version ${majorVersion}`
+			`No versions found for package ${packageName} with major version ${majorVersion}`,
 		);
 	}
 	const latestVersion = sortedVersions[0];
 
 	const latestRes = await fetch(
-		`${REGISTRY_URL}${packageName}/${latestVersion}`
+		`${REGISTRY_URL}${packageName}/${latestVersion}`,
 	);
 	const latestMeta = await latestRes.json();
 	return latestMeta;
@@ -217,7 +216,7 @@ type NodePackageMeta = {
 };
 
 export async function bootstrap(
-	cfg: Partial<ServerBootstrapOptions> = {}
+	cfg: Partial<ServerBootstrapOptions> = {},
 ): Promise<{
 	routeRequest: typeof routeRequest;
 	routeUpgrade: typeof routeUpgrade;
@@ -232,21 +231,21 @@ export async function bootstrap(
 		await getDownloadedPackageVersion("controller");
 	if (downloadedControllerVersion) {
 		console.log(
-			`Found downloaded Scramjet Controller version: ${downloadedControllerVersion}`
+			`Found downloaded Scramjet Controller version: ${downloadedControllerVersion}`,
 		);
 	}
 
 	if (config.transport === "epoxy") {
 		const epoxyMeta = await findLatestVersionOfPackage(
 			EPOXY_TRANSPORT_PACKAGE_NAME,
-			EPOXY_TRANSPORT_PINNED_MAJOR_VERSION
+			EPOXY_TRANSPORT_PINNED_MAJOR_VERSION,
 		);
 		await unpack(epoxyMeta.dist.tarball, "epoxy-transport");
 		console.log(`Using Epoxy Transport version: ${epoxyMeta.version}`);
 	} else if (config.transport === "libcurl") {
 		const libcurlMeta = await findLatestVersionOfPackage(
 			LIBCURL_TRANSPORT_PACKAGE_NAME,
-			LIBCURL_TRANSPORT_PINNED_MAJOR_VERSION
+			LIBCURL_TRANSPORT_PINNED_MAJOR_VERSION,
 		);
 		await unpack(libcurlMeta.dist.tarball, "libcurl-transport");
 		console.log(`Using libcurl Transport version: ${libcurlMeta.version}`);
@@ -256,17 +255,17 @@ export async function bootstrap(
 
 	const controllerMeta = await findLatestVersionOfPackage(
 		SCRAMJET_CONTROLLER_PACKAGE_NAME,
-		SCRAMJET_CONTROLLER_PINNED_MAJOR_VERSION
+		SCRAMJET_CONTROLLER_PINNED_MAJOR_VERSION,
 	);
 
 	if (downloadedControllerVersion === controllerMeta.version) {
 		console.log(
-			`Scramjet Controller is up to date (version: ${downloadedControllerVersion}), skipping download.`
+			`Scramjet Controller is up to date (version: ${downloadedControllerVersion}), skipping download.`,
 		);
 	} else {
 		await updateScramjet(controllerMeta);
 		console.log(
-			`Downloaded Scramjet Controller version: ${controllerMeta.version}`
+			`Downloaded Scramjet Controller version: ${controllerMeta.version}`,
 		);
 	}
 
@@ -274,11 +273,11 @@ export async function bootstrap(
 		await getDownloadedPackageVersion("scramjet-utils");
 	const utilsMeta = await findLatestVersionOfPackage(
 		SCRAMJET_UTILS_PACKAGE_NAME,
-		SCRAMJET_UTILS_PINNED_MAJOR_VERSION
+		SCRAMJET_UTILS_PINNED_MAJOR_VERSION,
 	);
 	if (downloadedUtilsVersion === utilsMeta.version) {
 		console.log(
-			`Scramjet Utils is up to date (version: ${downloadedUtilsVersion}), skipping download.`
+			`Scramjet Utils is up to date (version: ${downloadedUtilsVersion}), skipping download.`,
 		);
 	} else {
 		await unpack(utilsMeta.dist.tarball, "scramjet-utils");

@@ -1,6 +1,6 @@
 import { createStore, css, type Component } from "dreamland/core";
-import type { ScramjetFlags } from "@mercuryworkshop/scramjet";
-import { defaultConfigDev } from "@mercuryworkshop/scramjet";
+import type { ScramjetFlags } from "driftproxy";
+import { defaultConfigDev } from "driftproxy";
 import { cachePlugin, controller } from "..";
 
 const flagStore = createStore<ScramjetFlags>(
@@ -11,7 +11,7 @@ const flagStore = createStore<ScramjetFlags>(
 		ident: "scramjet-flags",
 		backing: "localstorage",
 		autosave: "auto",
-	}
+	},
 );
 
 // Flag descriptions for better UX
@@ -84,7 +84,7 @@ const FlagEditor: Component<
 	return (
 		<div
 			class={use(this.inline).map(
-				(inline) => `flag-editor ${inline ? "inline" : ""}`
+				(inline) => `flag-editor ${inline ? "inline" : ""}`,
 			)}
 		>
 			<button
@@ -109,7 +109,7 @@ const FlagEditor: Component<
 						</div>
 					</div>
 					{use(this.cacheBustStatus).andThen(
-						<div class="cache-bust-status">{use(this.cacheBustStatus)}</div>
+						<div class="cache-bust-status">{use(this.cacheBustStatus)}</div>,
 					)}
 					<div class="flags-list">
 						{(Object.keys(flagStore) as Array<keyof ScramjetFlags>).map(
@@ -127,10 +127,10 @@ const FlagEditor: Component<
 										<span class="flag-desc">{flagDescriptions[flag]}</span>
 									</div>
 								</label>
-							)
+							),
 						)}
 					</div>
-				</div>
+				</div>,
 			)}
 		</div>
 	);

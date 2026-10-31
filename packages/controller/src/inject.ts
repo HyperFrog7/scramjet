@@ -4,7 +4,7 @@ import type {
 	TransferrableResponse,
 } from "@mercuryworkshop/proxy-transports";
 
-import { RpcHelper } from "@mercuryworkshop/rpc";
+import { RpcHelper } from "driftproxy-rpc";
 import type { Config } from ".";
 import { CONTROLLERFRAME } from "./symbols";
 import type {
@@ -23,13 +23,13 @@ import {
 	type ScramjetConfig,
 	type ScramjetContext,
 	type TrackedHistoryState,
-} from "@mercuryworkshop/scramjet";
+} from "driftproxy";
 
 const MessagePort_postMessage = MessagePort.prototype.postMessage;
 const postMessage = (
 	port: MessagePort,
 	data: any,
-	transfer?: Transferable[]
+	transfer?: Transferable[],
 ) => {
 	MessagePort_postMessage.call(port, data, transfer as any);
 };
@@ -57,7 +57,7 @@ class RemoteTransport implements ProxyTransport {
 			"transport",
 			(data, transfer) => {
 				postMessage(port, data, transfer);
-			}
+			},
 		);
 		port.onmessageerror = (ev) => {
 			console.error("onmessageerror (this should never happen!)", ev);
@@ -74,7 +74,7 @@ class RemoteTransport implements ProxyTransport {
 		onopen: (protocol: string, extensions: string) => void,
 		onmessage: (data: Blob | ArrayBuffer | string) => void,
 		onclose: (code: number, reason: string) => void,
-		onerror: (error: string) => void
+		onerror: (error: string) => void,
 	): [
 		(data: Blob | ArrayBuffer | string) => void,
 		(code: number, reason: string) => void,
@@ -91,7 +91,7 @@ class RemoteTransport implements ProxyTransport {
 					requestHeaders,
 					port: channel.port2,
 				},
-				[channel.port2]
+				[channel.port2],
 			)
 			.then((response) => {
 				console.log(response);
@@ -122,7 +122,7 @@ class RemoteTransport implements ProxyTransport {
 						type: "data",
 						data: data,
 					},
-					data instanceof ArrayBuffer ? [data] : []
+					data instanceof ArrayBuffer ? [data] : [],
 				);
 			},
 			(code) => {
@@ -139,7 +139,7 @@ class RemoteTransport implements ProxyTransport {
 		method: string,
 		body: BodyInit | null,
 		headers: RawHeaders,
-		_signal: AbortSignal | undefined
+		_signal: AbortSignal | undefined,
 	): Promise<TransferrableResponse> {
 		return await this.rpc.call("request", {
 			remote: remote.href,
@@ -151,7 +151,7 @@ class RemoteTransport implements ProxyTransport {
 
 	async sendSetCookie(
 		cookies: Array<{ url: URL; cookie: string }>,
-		options: CookieSyncOptions = {}
+		options: CookieSyncOptions = {},
 	): Promise<void> {
 		await this.rpc.call("sendSetCookie", {
 			cookies: cookies.map(({ url, cookie }) => ({
@@ -176,7 +176,7 @@ type Init = {
 		prefix: URL,
 		cookieJar: CookieJar,
 		codecEncode: (input: string) => string,
-		codecDecode: (input: string) => string
+		codecDecode: (input: string) => string,
 	) => any;
 	codecEncode: (input: string) => string;
 	codecDecode: (input: string) => string;
@@ -218,7 +218,7 @@ class ExecutionContextWrapper {
 
 	constructor(
 		public global: typeof globalThis,
-		public init: Init
+		public init: Init,
 	) {
 		const channel = new MessageChannel();
 		this.transport = new RemoteTransport(channel.port1);
@@ -229,7 +229,7 @@ class ExecutionContextWrapper {
 					prefix: this.init.prefix.href,
 				},
 			},
-			[channel.port2]
+			[channel.port2],
 		);
 
 		this.cookieJar = new CookieJar();
@@ -282,7 +282,7 @@ class ExecutionContextWrapper {
 
 		navigator.serviceWorker?.addEventListener(
 			"message",
-			this.handleServiceWorkerCookieMessage
+			this.handleServiceWorkerCookieMessage,
 		);
 
 		this.injectScramjet();
@@ -306,7 +306,7 @@ class ExecutionContextWrapper {
 				}
 				const currentFrame = currentclient.descriptors.get(
 					"window.frameElement",
-					currentwin
+					currentwin,
 				);
 				if (currentFrame && currentFrame[CONTROLLERFRAME]) {
 					controllerFrame = currentFrame[CONTROLLERFRAME];
@@ -326,7 +326,7 @@ class ExecutionContextWrapper {
 					this.init.prefix,
 					this.cookieJar,
 					this.init.codecEncode,
-					this.init.codecDecode
+					this.init.codecDecode,
 				),
 				codecEncode: this.init.codecEncode,
 				codecDecode: this.init.codecDecode,

@@ -4,15 +4,12 @@ import {
 	type Component,
 	createState,
 } from "dreamland/core";
-import {
-	CatchEscapedLinksPlugin,
-	UrlWatcherPlugin,
-} from "@mercuryworkshop/scramjet-utils";
-import { versionInfo } from "@mercuryworkshop/scramjet";
+import { CatchEscapedLinksPlugin, UrlWatcherPlugin } from "driftproxy-utils";
+import { versionInfo } from "driftproxy";
 import { cachePlugin, controller } from "..";
 import { demoSettingsStore, normalizeHomeUrl } from "../store";
 import homepage from "./homepage.html?raw";
-import type { Frame } from "@mercuryworkshop/scramjet-controller";
+import type { Frame } from "driftproxy-controller";
 
 export const browserState = createState({
 	url: demoSettingsStore.homeUrl,
@@ -21,14 +18,14 @@ export const browserState = createState({
 
 export const Omnibox: Component = function (cx) {
 	const navigate = () => {
-	  let url: string;
-    try {
-        url = normalizeHomeUrl(browserState.url);
-    } catch (e) {
-        console.error("navigate failed:", e);
-        return;
-    }
-    browserState.url = url;
+		let url: string;
+		try {
+			url = normalizeHomeUrl(browserState.url);
+		} catch (e) {
+			console.error("navigate failed:", e);
+			return;
+		}
+		browserState.url = url;
 		demoSettingsStore.homeUrl = browserState.url;
 		browserState.frame?.go(browserState.url);
 	};
@@ -163,7 +160,7 @@ const BrowserView: Component<
 		});
 		let catchEscapedLinks = new CatchEscapedLinksPlugin(
 			(url) =>
-				new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin)
+				new URL(`/?goto=${encodeURIComponent(url.href)}`, location.origin),
 		);
 		browserState.frame = controller.createFrame(this.frameel, {
 			plugins: [cachePlugin, urlWatcher, catchEscapedLinks],
@@ -171,18 +168,18 @@ const BrowserView: Component<
 		let realHomepage = homepage;
 		realHomepage = realHomepage.replaceAll(
 			"{{SCRAMJET_VERSION}}",
-			String(versionInfo.version)
+			String(versionInfo.version),
 		);
 		realHomepage = realHomepage.replaceAll(
 			"{{SCRAMJET_BUILD}}",
-			String(versionInfo.build)
+			String(versionInfo.build),
 		);
 		realHomepage = realHomepage.replaceAll(
 			"{{SCRAMJET_DATE_PRETTY}}",
 			new Date(versionInfo.date).toLocaleString(undefined, {
 				dateStyle: "short",
 				timeStyle: "short",
-			})
+			}),
 		);
 		this.frameel.src = `data:text/html;base64,${btoa(realHomepage)}`;
 
@@ -196,7 +193,7 @@ const BrowserView: Component<
 	return (
 		<div
 			class={use(this.active).map(
-				(active) => `tab-panel browser-view ${active ? "active" : ""}`
+				(active) => `tab-panel browser-view ${active ? "active" : ""}`,
 			)}
 		>
 			<iframe this={use(this.frameel)}></iframe>
