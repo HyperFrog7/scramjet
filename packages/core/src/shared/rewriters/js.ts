@@ -12,7 +12,9 @@ import {
 } from "../snapshot";
 
 // eslint-disable-next-line scramjet-core/no-globals
-Error.stackTraceLimit = 50;
+(Error as any).stackTraceLimit = 50;
+
+const strictModeRegex = new _RegExp(/^\s*(['"])use strict\1;?/);
 
 type RewriterResult = {
 	js: string | Uint8Array;
@@ -25,7 +27,7 @@ function rewriteJsWasm(
 	source: string | null,
 	context: ScramjetContext,
 	meta: URLMeta,
-	isModule: boolean
+	isModule: boolean,
 ): RewriterResult {
 	const [rewriter, ret] = getRewriter(context, meta);
 
@@ -37,7 +39,6 @@ function rewriteJsWasm(
 	try {
 		let out: JsRewriterOutput;
 		const before = Performance_now();
-		// try {
 		if (typeof input === "string") {
 			out = rewriter.rewrite_js(
 				{
@@ -49,7 +50,7 @@ function rewriteJsWasm(
 				input,
 				meta.base.href,
 				source || "(unknown)",
-				isModule
+				isModule,
 			);
 		} else {
 			out = rewriter.rewrite_js_bytes(
@@ -62,20 +63,9 @@ function rewriteJsWasm(
 				input,
 				meta.base.href,
 				source || "(unknown)",
-				isModule
+				isModule,
 			);
 		}
-		// } catch (err) {
-		// 	const err1 = err as Error;
-		// 	console.warn(
-		// 		"failed rewriting js for",
-		// 		source,
-		// 		err1.message,
-		// 		input instanceof Uint8Array ? textDecoder.decode(input) : input
-		// 	);
-
-		// 	return { js: input, tag: "", map: null };
-		// }
 		if (flagEnabled("rewriterLogs", context, meta.base)) {
 			dbg.time(meta, before, `oxc rewrite for "${source || "(unknown)"}"`);
 		}
@@ -98,7 +88,7 @@ export function rewriteJsInner(
 	url: string | null,
 	context: ScramjetContext,
 	meta: URLMeta,
-	isModule = false
+	isModule = false,
 ) {
 	return rewriteJsWasm(js, url, context, meta, isModule);
 }
@@ -108,7 +98,7 @@ export function rewriteJs(
 	url: string | null,
 	context: ScramjetContext,
 	meta: URLMeta,
-	isModule = false
+	isModule = false,
 ): string | Uint8Array {
 	try {
 		const res = rewriteJsInner(js, url, context, meta, isModule);
@@ -121,14 +111,13 @@ export function rewriteJs(
 			} else {
 				// TODO: how do we check instanceof here?
 				if (typeof newjs !== "string") {
-					newjs = TextDecoder_decode(newjs);
+					newjs = TextDecoder_decode(newjs) as string;
 				}
 				const sourcemapfn = `${context.config.globals.pushsourcemapfn}([${res.map.join(",")}], "${res.tag}");`;
 
 				// don't put the sourcemap call before "use strict"
-				const strictMode = new _RegExp(/^\s*(['"])use strict\1;?/);
-				if (strictMode.test(newjs)) {
-					newjs = newjs.replace(strictMode, `$&\n${sourcemapfn}`);
+				if (strictModeRegex.test(newjs)) {
+					newjs = newjs.replace(strictModeRegex, `$&\n${sourcemapfn}`);
 				} else {
 					newjs = `${sourcemapfn}\n${newjs}`;
 				}
@@ -147,7 +136,7 @@ export function rewriteJs(
 			"failed rewriting js for",
 			url || "(unknown)",
 			err.message,
-			typeof js !== "string" ? TextDecoder_decode(js) : js
+			typeof js !== "string" ? TextDecoder_decode(js) : js,
 		);
 		if (flagEnabled("allowInvalidJs", context, meta.base)) {
 			return js;

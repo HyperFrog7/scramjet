@@ -48,7 +48,7 @@ function tryCanParseURL(url: string, origin?: string | URL): _URL | null {
 export function rewriteBlob(
 	url: string,
 	context: ScramjetContext,
-	meta: URLMeta
+	meta: URLMeta,
 ) {
 	const blob = new _URL(url.substring("blob:".length));
 
@@ -58,7 +58,7 @@ export function rewriteBlob(
 export function unrewriteBlob(
 	url: string,
 	context: ScramjetContext,
-	_meta: URLMeta
+	_meta: URLMeta,
 ) {
 	const blob = new _URL(url.substring("blob:".length));
 
@@ -76,13 +76,13 @@ function dataToBlob(url: string) {
 	const mediaType = metaParts.shift() || "";
 	const isBase64 = metaParts.some((part) => part.toLowerCase() === "base64");
 	const params = metaParts.filter(
-		(part) => part && part.toLowerCase() !== "base64"
+		(part) => part && part.toLowerCase() !== "base64",
 	);
 
 	let type = mediaType || "text/plain";
 	if (!mediaType) {
 		const hasCharset = params.some((part) =>
-			String_startsWith(part.toLowerCase(), "charset=")
+			String_startsWith(part.toLowerCase(), "charset="),
 		);
 		if (!hasCharset) {
 			params.push("charset=US-ASCII");
@@ -109,7 +109,7 @@ function dataToBlob(url: string) {
 		bytes = TextEncoder_encode(decoded);
 	}
 
-	const blob = new Blob([bytes], { type });
+	const blob = new Blob([bytes as unknown as BlobPart], { type });
 	const objectUrl = URL_createObjectURL(blob);
 	return { blob, objectUrl };
 }
@@ -118,7 +118,7 @@ export function rewriteUrl(
 	url: string | URL,
 	context: ScramjetContext,
 	meta: URLMeta,
-	options?: RewriteUrlOptions
+	options?: RewriteUrlOptions,
 ) {
 	url = String(url);
 
@@ -129,7 +129,7 @@ export function rewriteUrl(
 				url.slice("javascript:".length),
 				"(javascript: url)",
 				context,
-				meta
+				meta,
 			)
 		);
 	} else if (String_startsWith(url, "blob:")) {
@@ -170,7 +170,10 @@ export function rewriteUrl(
 			return url;
 		}
 
-		const encodedHash = context.interface.codecEncode(realUrl.hash.slice(1));
+		// most urls carry no fragment; skip the codec round trip in that case
+		const rawHash = realUrl.hash;
+		const encodedHash =
+			rawHash.length > 1 ? context.interface.codecEncode(rawHash.slice(1)) : "";
 		const realHash = encodedHash ? "#" + encodedHash : "";
 		realUrl.hash = "";
 
@@ -196,11 +199,13 @@ export function rewriteUrl(
 			paramsInit.set(QP.initiatorOrigin, meta.origin.origin);
 		}
 
-		let paramstring = "";
-		if (paramsInit.toString()) paramstring = "?" + paramsInit.toString();
+		// toString() is a full serialize; it used to run twice per url
+		const serializedParams = paramsInit.toString();
+		const paramstring = serializedParams ? "?" + serializedParams : "";
+		const prefixHref = context.prefix.href;
 
 		return (
-			context.prefix.href +
+			prefixHref +
 			context.interface.codecEncode(realUrl.href) +
 			paramstring +
 			realHash
@@ -246,7 +251,7 @@ export function unrewriteUrl(url: string | URL, context: ScramjetContext) {
 
 		return (
 			context.interface.codecDecode(
-				realUrl.href.slice(context.prefix.href.length)
+				realUrl.href.slice(context.prefix.href.length),
 			) + realHash
 		);
 	} else if (url == "") {

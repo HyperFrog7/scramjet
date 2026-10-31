@@ -22,6 +22,8 @@ import {
 	String_fromCodePoint,
 	btoa,
 	_URL,
+	_Map,
+	_Set,
 } from "@/shared/snapshot";
 import { flagEnabled } from "..";
 import {
@@ -74,7 +76,7 @@ export class IncrementalHtmlRewriter {
 	constructor(
 		private readonly context: ScramjetContext,
 		private readonly meta: URLMeta,
-		private readonly htmlcontext: HtmlContext
+		private readonly htmlcontext: HtmlContext,
 	) {
 		this.handler = new DomHandler(undefined, undefined, (element) => {
 			this.completedElements.add(element);
@@ -143,7 +145,7 @@ export class IncrementalHtmlRewriter {
 				node,
 				this.context,
 				this.meta,
-				this.htmlcontext
+				this.htmlcontext,
 			);
 			this.rewrittenNodes.set(node, rewritten);
 		}
@@ -156,7 +158,7 @@ function rewriteHtmlInner(
 	html: string | ChildNode,
 	context: ScramjetContext,
 	meta: URLMeta,
-	htmlcontext: HtmlContext
+	htmlcontext: HtmlContext,
 ) {
 	if (typeof html !== "string") {
 		html = serializeHtmlNode(html);
@@ -177,7 +179,7 @@ function rewriteHtmlInner(
 			htmlcontext,
 			origHtml: html,
 		},
-		undefined
+		undefined,
 	);
 	traverseParsedHtml(handler.root, context, meta);
 
@@ -243,12 +245,12 @@ function rewriteHtmlInner(
 			meta,
 			handler,
 			htmlcontext,
-			script
+			script,
 		);
 
 		if (isQuirky) {
 			dbg.warn(
-				`detected quirky document structure parsing @ ${meta.origin.href}!`
+				`detected quirky document structure parsing @ ${meta.origin.href}!`,
 			);
 			// there's weird stuff going on with the document that could result in page scripts being loaded before our inject scripts
 			// so inject them at position 0
@@ -272,7 +274,7 @@ function rewriteHtmlInner(
 			htmlcontext,
 			origHtml: html,
 		},
-		props
+		props,
 	);
 
 	if (props.setRawHtml !== undefined) {
@@ -286,7 +288,7 @@ export function rewriteHtml(
 	html: string,
 	context: ScramjetContext,
 	meta: URLMeta,
-	htmlcontext: HtmlContext
+	htmlcontext: HtmlContext,
 ) {
 	const before = Performance_now();
 	const ret = rewriteHtmlInner(html, context, meta, htmlcontext);
@@ -346,40 +348,44 @@ export function unrewriteHtml(html: string, foreignContext?: ForeignContext) {
 function traverseParsedHtml(
 	node: any,
 	context: ScramjetContext,
-	meta: URLMeta
+	meta: URLMeta,
 ) {
 	if (node.name === "base" && node.attribs.href !== undefined) {
 		meta.base = new _URL(node.attribs.href, meta.origin);
 	}
 
 	if (node.attribs) {
-		for (const rule of htmlRules) {
-			for (const attr in rule) {
-				const sel = rule[attr.toLowerCase()];
-				if (typeof sel === "function") continue;
+		// walk the element's attributes, not every rule selector: the old loop
+		// scanned each rule's full attribute list (plus a toLowerCase) per node
+		const attributeRules = rulesByAttribute();
+		for (const attr in node.attribs) {
+			const rules = attributeRules.get(attr);
+			if (rules === undefined) continue;
 
-				if (sel === "*" || sel.includes(node.name)) {
-					if (node.attribs[attr] !== undefined) {
-						const value = node.attribs[attr];
-						const v = rule.fn(value, context, meta, node.attribs);
+			for (const rule of rules) {
+				if (rule.selectors !== "*" && !rule.selectors.has(node.name)) continue;
 
-						if (v === null) delete node.attribs[attr];
-						else {
-							node.attribs[attr] = v;
-						}
-						node.attribs[`scramjet-attr-${attr}`] = value;
-					}
-				}
+				const value = node.attribs[attr];
+				if (value === undefined) continue;
+
+				const rewritten = rule.fn(value, context, meta, node.attribs);
+				if (rewritten === null) delete node.attribs[attr];
+				else node.attribs[attr] = rewritten;
+				node.attribs[`scramjet-attr-${attr}`] = value;
 			}
 		}
-		for (const [attr, value] of Object_entries(node.attribs)) {
-			if (eventAttributes.includes(attr)) {
+
+		// event handler attributes are rare, so collect them before mutating
+		const events = collectEventAttributes(node.attribs);
+		if (events !== null) {
+			for (const attr of events) {
+				const value = node.attribs[attr];
 				node.attribs[`scramjet-attr-${attr}`] = value;
 				node.attribs[attr] = rewriteJs(
-					value as string,
+					value,
 					`(inline ${attr} on element)`,
 					context,
-					meta
+					meta,
 				);
 			}
 		}
@@ -420,13 +426,13 @@ function traverseParsedHtml(
 			"type" in node.attribs ? node.attribs.type : undefined,
 			"language" in node.attribs ? node.attribs.language : undefined,
 			"type" in node.attribs,
-			"language" in node.attribs
+			"language" in node.attribs,
 		);
 		if (isScriptType(scriptBlockType)) {
 			let js = node.children[0].data;
 			const module = isModuleScriptType(scriptBlockType);
 			node.attribs["scramjet-attr-script-source-src"] = bytesToBase64(
-				TextEncoder_encode(js)
+				TextEncoder_encode(js),
 			);
 			const htmlcomment = /<!--[\s\S]*?-->/g;
 			js = js.replace(htmlcomment, "");
@@ -435,7 +441,7 @@ function traverseParsedHtml(
 				"(inline script element)",
 				context,
 				meta,
-				module
+				module,
 			);
 		}
 	}
@@ -459,12 +465,9 @@ function traverseParsedHtml(
 	}
 
 	if (node.childNodes) {
-		for (const childNode in node.childNodes) {
-			node.childNodes[childNode] = traverseParsedHtml(
-				node.childNodes[childNode],
-				context,
-				meta
-			);
+		const children = node.childNodes;
+		for (let i = 0; i < children.length; i++) {
+			children[i] = traverseParsedHtml(children[i], context, meta);
 		}
 	}
 
@@ -474,7 +477,7 @@ function traverseParsedHtml(
 export function rewriteSrcset(
 	srcset: string,
 	context: ScramjetContext,
-	meta: URLMeta
+	meta: URLMeta,
 ) {
 	const sources = srcset.split(/ .*,/).map((src) => src.trim());
 	const rewrittenSources = sources.map((source) => {
@@ -601,3 +604,60 @@ const eventAttributes = [
 	"onscrollsnapchange",
 	"onscrollsnapchanging",
 ];
+
+const eventAttributeSet = new _Set(
+	eventAttributes,
+) as unknown as ReadonlySet<string>;
+
+function collectEventAttributes(
+	attribs: Record<string, string>,
+): string[] | null {
+	let found: string[] | null = null;
+	for (const attr in attribs) {
+		if (eventAttributeSet.has(attr)) (found ??= []).push(attr);
+	}
+	return found;
+}
+
+type CompiledAttributeRule = {
+	selectors: Set<string> | "*";
+	fn: (typeof htmlRules)[number]["fn"];
+};
+
+let compiledRules: Map<string, CompiledAttributeRule[]> | undefined;
+
+/**
+ * Attribute name -> rules that apply to it, built once so document rewriting
+ * only looks at the attributes an element actually carries instead of scanning
+ * every selector of every rule for every node.
+ *
+ * Built lazily on first use: htmlRules imports rewriteHtml from this module, so
+ * touching htmlRules during module initialization would read it before the
+ * circular import finishes and throw a TDZ ReferenceError.
+ */
+function rulesByAttribute(): Map<string, CompiledAttributeRule[]> {
+	if (compiledRules) return compiledRules;
+
+	const map = new _Map() as unknown as Map<string, CompiledAttributeRule[]>;
+	for (const rule of htmlRules) {
+		for (const key in rule) {
+			if (key === "fn") continue;
+			const selectors = (rule as Record<string, unknown>)[key];
+			if (typeof selectors === "function") continue;
+
+			const attr = key.toLowerCase();
+			let list = map.get(attr);
+			if (!list) map.set(attr, (list = []));
+			list.push({
+				selectors:
+					selectors === "*"
+						? "*"
+						: (new _Set(selectors as string[]) as unknown as Set<string>),
+				fn: rule.fn,
+			});
+		}
+	}
+
+	compiledRules = map;
+	return map;
+}
