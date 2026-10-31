@@ -196,7 +196,7 @@ async function discoverTests(): Promise<Test[]> {
 }
 
 async function loadExpectedFailingTests(
-	filePath: string
+	filePath: string,
 ): Promise<Set<string>> {
 	try {
 		const raw = await readFile(filePath, "utf-8");
@@ -217,7 +217,7 @@ async function loadExpectedFailingTests(
 
 async function writeExpectedFailingTests(
 	filePath: string,
-	tests: string[]
+	tests: string[],
 ): Promise<void> {
 	const payload: ExpectedFailingTestsFile = {
 		tests: [...tests].sort(),
@@ -232,11 +232,11 @@ async function createTestPage(
 		onConsistent?: (
 			source: HarnessKind,
 			label: string,
-			value: any
+			value: any,
 		) => Promise<void>;
 		collectCoverage?: boolean;
 		installBindings?: boolean;
-	}
+	},
 ): Promise<{
 	page: Page;
 	context: BrowserContext;
@@ -405,7 +405,7 @@ async function resetTestFrame(page: Page) {
 			() =>
 				new Promise<void>((resolve) => {
 					const iframe = document.getElementById(
-						"testframe"
+						"testframe",
 					) as HTMLIFrameElement | null;
 					// No previous document to tear down.
 					if (!iframe || iframe.getAttribute("src") === "about:blank") {
@@ -425,7 +425,7 @@ async function resetTestFrame(page: Page) {
 					// Never let a frame that won't fire `load` stall the run.
 					setTimeout(finish, 2000);
 					iframe.src = "about:blank";
-				})
+				}),
 		)
 		.catch(() => {});
 }
@@ -441,7 +441,7 @@ async function syncRunwayCleartextHarness(page: Page, test: Test) {
 			(window as any).__runwayCleartextHttpsHosts = payload.hosts;
 			(window as any).__runwayCleartextSite = payload.site;
 		},
-		{ hosts, site }
+		{ hosts, site },
 	);
 }
 
@@ -454,7 +454,7 @@ async function runTestOnHarness(
 	watchPage: (otherPage: Page) => () => void,
 	test: Test,
 	serverResult: Promise<TestResult> | null,
-	timeout: number = 30000
+	timeout: number = 30000,
 ): Promise<TestResult> {
 	// Must happen before this test arms the page, so that anything the previous
 	// document emits on the way out isn't charged to this test.
@@ -492,7 +492,7 @@ async function runTestOnHarness(
 					clearTimeout(timeoutId);
 				}
 			},
-			{ url: proxiedUrl, timeout: Math.min(timeout, 5000) }
+			{ url: proxiedUrl, timeout: Math.min(timeout, 5000) },
 		);
 	};
 
@@ -523,11 +523,11 @@ async function runTestOnHarness(
 		: appendRunwayToken(
 				runwayTestTargetUrl(test),
 				runwayToken,
-				test.name.startsWith("wpt-")
+				test.name.startsWith("wpt-"),
 			);
 	const harnessResultPromise = waitForResult(
 		timeout,
-		test.topLevelScramjet ? undefined : runwayToken
+		test.topLevelScramjet ? undefined : runwayToken,
 	);
 	let result: TestResult;
 	let topLevelPage: Page | null = null;
@@ -540,7 +540,7 @@ async function runTestOnHarness(
 			}
 			(window as any).__runwayNavigate(url);
 			const iframe = document.getElementById(
-				"testframe"
+				"testframe",
 			) as HTMLIFrameElement | null;
 			return iframe?.src || "";
 		}, testUrl);
@@ -565,7 +565,7 @@ async function runTestOnHarness(
 					clearTimeout(timeoutId);
 				}
 			},
-			{ url: proxiedUrl, timeout: Math.min(timeout, 5000) }
+			{ url: proxiedUrl, timeout: Math.min(timeout, 5000) },
 		);
 		topLevelPage = await context.newPage();
 		stopWatchingTopLevelPage = watchPage(topLevelPage);
@@ -603,7 +603,7 @@ async function runTestOnHarness(
 									message:
 										error instanceof Error ? error.message : String(error),
 								},
-							})
+							}),
 						),
 					]
 				: []),
@@ -624,7 +624,7 @@ async function runTestOnHarness(
 					(error) => ({
 						status: "fail" as const,
 						message: error instanceof Error ? error.message : String(error),
-					})
+					}),
 				),
 			]);
 			result = raced;
@@ -661,7 +661,7 @@ function appendRunwayToken(url: string, token: string, useQuery: boolean) {
 		return parsed.toString();
 	}
 	const hashParams = new URLSearchParams(
-		parsed.hash.startsWith("#") ? parsed.hash.slice(1) : parsed.hash
+		parsed.hash.startsWith("#") ? parsed.hash.slice(1) : parsed.hash,
 	);
 	hashParams.set("runway_token", token);
 	parsed.hash = hashParams.toString();
@@ -702,7 +702,7 @@ async function main() {
 		: allTests;
 	const parallelism = Math.max(
 		1,
-		Number(process.env.RUNWAY_PARALLEL ?? parallelArg ?? 1)
+		Number(process.env.RUNWAY_PARALLEL ?? parallelArg ?? 1),
 	);
 	const fastMode = process.env.RUNWAY_FAST === "1";
 	const omitWpt = process.env.OMIT_WPT === "1";
@@ -711,17 +711,17 @@ async function main() {
 	const runBareTests = !fastMode;
 
 	if (testFilter) {
-		console.log(`� Filter: "${testFilter}"`);
+		console.log(`🔎 Filter: "${testFilter}"`);
 	}
 	console.log(
-		`�📋 Found ${tests.length} test(s)${testFilter ? ` (${allTests.length} total)` : ""}\n`
+		`📋 Found ${tests.length} test(s)${testFilter ? ` (${allTests.length} total)` : ""}\n`,
 	);
 	if (parallelism > 1) {
 		console.log(`🧵 Parallel workers: ${parallelism}\n`);
 	}
 	if (fastMode) {
 		console.log(
-			"⚡ Fast mode: reusing one scramjet harness instance per worker and skipping bare tests\n"
+			"⚡ Fast mode: reusing one scramjet harness instance per worker and skipping bare tests\n",
 		);
 	}
 	if (updateFailingTests) {
@@ -733,7 +733,7 @@ async function main() {
 
 	if (tests.length === 0) {
 		console.log(
-			`❌ No tests found${testFilter ? ` matching "${testFilter}"` : ""}`
+			`❌ No tests found${testFilter ? ` matching "${testFilter}"` : ""}`,
 		);
 		process.exit(1);
 	}
@@ -792,7 +792,7 @@ async function main() {
 		try {
 			await page.waitForFunction(
 				() => typeof (window as any).__runwayNavigate === "function",
-				{ timeout: 30000 }
+				{ timeout: 30000 },
 			);
 		} catch {
 			const statusText = await page.evaluate(() => {
@@ -800,10 +800,10 @@ async function main() {
 				return el?.textContent || "";
 			});
 			console.error(
-				`\n💥 FATAL: ${label} harness failed to initialize: ${statusText}`
+				`\n💥 FATAL: ${label} harness failed to initialize: ${statusText}`,
 			);
 			console.error(
-				"   Check that scramjet is built and all dependencies are available.\n"
+				"   Check that scramjet is built and all dependencies are available.\n",
 			);
 			ghaError(`Harness failed to initialize: ${label}: ${statusText}`);
 			await browser?.close();
@@ -815,7 +815,7 @@ async function main() {
 		let consistencyHandler: (
 			source: HarnessKind,
 			label: string,
-			value: any
+			value: any,
 		) => Promise<void> = async () => {};
 		const workerNeedsBare =
 			runBareTests &&
@@ -885,7 +885,7 @@ async function main() {
 						await ensureHarnessReady(
 							testPages.scramjet.page,
 							scramjetUrl,
-							"Scramjet"
+							"Scramjet",
 						);
 						if (testPages.bare) {
 							await ensureHarnessReady(testPages.bare.page, bareUrl, "Bare");
@@ -918,7 +918,7 @@ async function main() {
 						testPages.scramjet.watchPage,
 						test,
 						serverResult,
-						test.timeoutMs
+						test.timeoutMs,
 					);
 					const barePromise = runBareForTest
 						? runTestOnHarness(
@@ -930,7 +930,7 @@ async function main() {
 								testPages.bare!.watchPage,
 								test,
 								serverResult,
-								test.timeoutMs
+								test.timeoutMs,
 							)
 						: null;
 
@@ -950,12 +950,12 @@ async function main() {
 						const failures: string[] = [];
 						if (scramjetResult.status !== "pass") {
 							failures.push(
-								`scramjet: ${scramjetResult.message || scramjetResult.status}`
+								`scramjet: ${scramjetResult.message || scramjetResult.status}`,
 							);
 						}
 						if (bareResult!.status !== "pass") {
 							failures.push(
-								`bare: ${bareResult!.message || bareResult!.status}`
+								`bare: ${bareResult!.message || bareResult!.status}`,
 							);
 						}
 						computedResult = {
@@ -1014,7 +1014,7 @@ async function main() {
 						ghaEndGroup(),
 					]
 						.filter(Boolean)
-						.join("\n")
+						.join("\n"),
 				);
 				if (!test.directFn) {
 					needsReload = !fastMode; // Reload after failure unless fast mode is reusing harnesses
@@ -1027,10 +1027,10 @@ async function main() {
 						ghaEndGroup(),
 					]
 						.filter(Boolean)
-						.join("\n")
+						.join("\n"),
 				);
 				ghaError(
-					`Test "${test.name}" error: ${finalResult.message || "Unknown error"}`
+					`Test "${test.name}" error: ${finalResult.message || "Unknown error"}`,
 				);
 				if (!test.directFn) {
 					needsReload = !fastMode; // Reload after error unless fast mode is reusing harnesses
@@ -1053,13 +1053,13 @@ async function main() {
 		workerBuckets[i % workerCount].push(tests[i]);
 	}
 	await Promise.all(
-		workerBuckets.map((bucket, index) => runTestsForWorker(index + 1, bucket))
+		workerBuckets.map((bucket, index) => runTestsForWorker(index + 1, bucket)),
 	);
 	await browser?.close();
 
 	if (coverageEnabled && needsHarness) {
 		const scramjetEntries = coverageEntries.filter((entry) =>
-			entry.url?.includes("/scramjet/scramjet.js")
+			entry.url?.includes("/scramjet/scramjet.js"),
 		);
 		const scramjetRoot = path.resolve(__dirname, "..", "..", "..");
 		const coreRoot = path.join(scramjetRoot, "packages", "core");
@@ -1081,7 +1081,7 @@ async function main() {
 				"@mercuryworkshop",
 				"scramjet",
 				"dist",
-				"scramjet.js"
+				"scramjet.js",
 			);
 			const mapPath = `${scramjetBundlePath}.map`;
 			const bundleSource = await readFile(scramjetBundlePath, "utf-8");
@@ -1128,17 +1128,17 @@ async function main() {
 		await writeFile(
 			path.join(coverageDir, "scramjet-coverage.json"),
 			JSON.stringify(filteredCoverage, null, 2),
-			"utf-8"
+			"utf-8",
 		);
 		const filteredCoverageMap = createCoverageMap(filteredCoverage);
 		const summary = filteredCoverageMap.getCoverageSummary();
 		const formatSummary = (item: typeof summary.lines) =>
 			`${item.pct.toFixed(1)}% (${item.covered}/${item.total})`;
 		console.log(
-			`\n📊 Scramjet TS coverage written to coverage/scramjet-coverage.json (${Object.keys(filteredCoverage).length} files)`
+			`\n📊 Scramjet TS coverage written to coverage/scramjet-coverage.json (${Object.keys(filteredCoverage).length} files)`,
 		);
 		console.log(
-			`📈 Coverage summary: lines ${formatSummary(summary.lines)}, statements ${formatSummary(summary.statements)}, functions ${formatSummary(summary.functions)}, branches ${formatSummary(summary.branches)}`
+			`📈 Coverage summary: lines ${formatSummary(summary.lines)}, statements ${formatSummary(summary.statements)}, functions ${formatSummary(summary.functions)}, branches ${formatSummary(summary.branches)}`,
 		);
 
 		const uncoveredFunctions: Array<{
@@ -1176,14 +1176,14 @@ async function main() {
 		await writeFile(
 			path.join(coverageDir, "scramjet-uncovered-functions.json"),
 			JSON.stringify(uncoveredFunctions, null, 2),
-			"utf-8"
+			"utf-8",
 		);
 		console.log(
-			`🧭 Uncovered functions written to coverage/scramjet-uncovered-functions.json (${uncoveredFunctions.length} entries)`
+			`🧭 Uncovered functions written to coverage/scramjet-uncovered-functions.json (${uncoveredFunctions.length} entries)`,
 		);
 	} else if (coverageEnabled) {
 		console.log(
-			"📊 Coverage requested, but no harness/browser tests ran. Skipping coverage output."
+			"📊 Coverage requested, but no harness/browser tests ran. Skipping coverage output.",
 		);
 	}
 
@@ -1194,7 +1194,7 @@ async function main() {
 	const errors = results.filter((r) => r.result.status === "error").length;
 
 	console.log(
-		`\n✅ ${passed} passed | ❌ ${failed} failed | 💥 ${errors} errors\n`
+		`\n✅ ${passed} passed | ❌ ${failed} failed | 💥 ${errors} errors\n`,
 	);
 	const selectedTestNames = new Set(tests.map((test) => test.name));
 	const actualFailing = results
@@ -1205,17 +1205,17 @@ async function main() {
 	if (updateFailingTests) {
 		await writeExpectedFailingTests(failingTestsPath, actualFailing);
 		console.log(
-			`📝 Wrote ${actualFailing.length} failing test(s) to ${path.relative(process.cwd(), failingTestsPath)}`
+			`📝 Wrote ${actualFailing.length} failing test(s) to ${path.relative(process.cwd(), failingTestsPath)}`,
 		);
 		process.exit(0);
 	}
 
 	const allExpectedFailing = await loadExpectedFailingTests(failingTestsPath);
 	const expectedFailing = new Set(
-		[...allExpectedFailing].filter((name) => selectedTestNames.has(name))
+		[...allExpectedFailing].filter((name) => selectedTestNames.has(name)),
 	);
 	const unexpectedFailing = actualFailing.filter(
-		(name) => !expectedFailing.has(name)
+		(name) => !expectedFailing.has(name),
 	);
 	const noLongerFailing = [...expectedFailing]
 		.filter((name) => !actualFailing.includes(name))
@@ -1223,7 +1223,7 @@ async function main() {
 
 	console.log("Expected failing diff:");
 	console.log(
-		`  expected=${expectedFailing.size} actual=${actualFailing.length} unexpected=${unexpectedFailing.length} fixed=${noLongerFailing.length}`
+		`  expected=${expectedFailing.size} actual=${actualFailing.length} unexpected=${unexpectedFailing.length} fixed=${noLongerFailing.length}`,
 	);
 	if (unexpectedFailing.length > 0) {
 		console.log("  unexpected failures:");
