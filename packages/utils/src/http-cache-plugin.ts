@@ -43,11 +43,8 @@
 // `rewriteBody` runs, without going through `rewriteBody` again. That can
 // come later.
 
-import {
-	BareResponse,
-	type ScramjetFetchRequest,
-	type ScramjetHeaders,
-} from "driftproxy";
+import { BareResponse } from "@mercuryworkshop/proxy-transports";
+import { type ScramjetFetchRequest, type ScramjetHeaders } from "driftproxy";
 import { ManagedPlugin } from "driftproxy-controller";
 import type { Frame } from "driftproxy-controller";
 

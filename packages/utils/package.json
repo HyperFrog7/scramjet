@@ -29,7 +29,8 @@
 	},
 	"peerDependencies": {
 		"driftproxy": "*",
-		"driftproxy-controller": "*"
+		"driftproxy-controller": "*",
+		"@mercuryworkshop/proxy-transports": "*"
 	},
 	"devDependencies": {
 		"driftproxy": "workspace:*",

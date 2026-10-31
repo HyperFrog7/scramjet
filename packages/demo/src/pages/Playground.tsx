@@ -1,7 +1,7 @@
 import { css, type Component } from "dreamland/core";
 import type { Frame } from "driftproxy-controller";
+import { BareResponse } from "@mercuryworkshop/proxy-transports";
 import {
-	BareResponse,
 	Plugin,
 	rewriteUrl,
 	ScramjetFetchHandler,
