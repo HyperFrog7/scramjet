@@ -1,5 +1,7 @@
 node_modules
 dist
+packages/core/bench/.out
+packages/core/bench/corpus/real
 packages/core/rewriter/target
 packages/core/rewriter/wasm/out
 packages/core/rewriter/*.js
