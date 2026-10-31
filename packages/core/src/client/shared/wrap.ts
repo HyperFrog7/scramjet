@@ -11,7 +11,7 @@ export function createWrapFn(client: ScramjetClient, self: GlobalThis) {
 		try {
 			if (SCRAMJETCLIENT in self.parent) {
 				// ... then we're in a subframe, and the parent frame is also in a proxy context, so we should return its proxy
-				wrappedParent = self.parent;
+				wrappedParent = self.parent as unknown as GlobalThis;
 			} else {
 				// ... then we should pretend we aren't nested and return the current window
 				wrappedParent = self;
@@ -111,7 +111,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			},
 			configurable: false,
 			enumerable: false,
-		}
+		},
 	);
 	Object_defineProperty(
 		self.Object.prototype,
@@ -126,7 +126,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			},
 			configurable: false,
 			enumerable: false,
-		}
+		},
 	);
 	Object_defineProperty(
 		self.Object.prototype,
@@ -140,7 +140,7 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			},
 			configurable: false,
 			enumerable: false,
-		}
+		},
 	);
 	Object_defineProperty(
 		self.Object.prototype,
@@ -154,25 +154,37 @@ export default function (client: ScramjetClient, self: GlobalThis) {
 			},
 			configurable: false,
 			enumerable: false,
-		}
+		},
 	);
 
-	self.$scramitize = function (v) {
-		const t = typeof v;
-		if (t === "object" && v !== null) {
-			if (v === location) debugger;
-			if (iswindow) {
-				// if (v === self.parent) debugger;
-				if (v === self.top) debugger;
-			}
-		} else if (t === "string") {
-			if (v.includes("scramjet")) debugger;
-			if (v.includes("~/sj")) debugger;
-			if (v.includes(location.origin)) debugger;
-		}
+	// the rewriter only emits `$scramitize(...)` calls when the scramitize flag
+	// is on, so keep the breakpoints behind the same flag instead of shipping a
+	// debug backdoor to every site in the default build
+	// installed as a non-enumerable own property: a plain assignment would put it
+	// on `Object.keys(window)`, which is a one-line proxy check for any site
+	Object_defineProperty(self, "$scramitize", {
+		writable: false,
+		configurable: false,
+		enumerable: false,
+		value: function (v) {
+			if (!client.flagEnabled("scramitize")) return v;
 
-		return v;
-	};
+			const t = typeof v;
+			if (t === "object" && v !== null) {
+				if (v === location) debugger;
+				if (iswindow) {
+					// if (v === self.parent) debugger;
+					if (v === self.top) debugger;
+				}
+			} else if (t === "string") {
+				if (v.includes("scramjet")) debugger;
+				if (v.includes("~/sj")) debugger;
+				if (v.includes(location.origin)) debugger;
+			}
+
+			return v;
+		},
+	});
 
 	// location = "..." can't be rewritten as wrapfn(location) = ..., so instead it will actually be rewritten as
 	// ((t)=>$scramjet$tryset(location,"+=",t)||location+=t)(...);
