@@ -1,7 +1,5 @@
-<h1 align="center">Drift Proxy</h1>
-
 <div align="center">
-  <img src="assets/driftproxy.png" height="160" alt="Drift Proxy" />
+  <img src="assets/driftproxy-wordmark.png" height="120" alt="Drift Proxy" />
 </div>
 
 ---
