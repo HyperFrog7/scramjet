@@ -196,6 +196,7 @@ SettingsView.style = css`
 		color: #e5e7eb;
 		overflow: auto;
 		font-family:
+			"Inter",
 			system-ui,
 			-apple-system,
 			"Segoe UI",

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Drift Proxy</title>
+		<title>New Tab</title>
 		<style>
 			:root {
 				color-scheme: dark;
@@ -15,154 +15,215 @@
 				margin: 0;
 				min-height: 100vh;
 				font-family:
+					"Inter",
 					system-ui,
 					-apple-system,
 					"Segoe UI",
 					Roboto,
-					"Helvetica Neue",
-					Arial,
 					sans-serif;
-				background: #0f0f0f;
-				color: #e5e7eb;
+				background:
+					radial-gradient(
+						1100px 520px at 50% -8%,
+						rgba(63, 169, 255, 0.18),
+						transparent 70%
+					),
+					#0a0a0b;
+				color: #e7e9ee;
 				display: grid;
-				place-items: start center;
-				padding: 30px 18px;
+				place-items: center;
+				padding: 40px 20px;
 			}
-			.sheet {
-				width: min(760px, 100%);
-				/*border: 1px solid #222;
-        background: #111;
-		*/
-				padding: 26px 28px;
+			.page {
+				width: min(700px, 100%);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 24px;
 			}
-			h1 {
-				margin: 0 0 8px;
-				font-size: 1.55rem;
-				font-weight: 650;
-				letter-spacing: 0.005em;
+			.wordmark {
+				font-size: 2.6rem;
+				font-weight: 600;
+				letter-spacing: -0.03em;
+				background: linear-gradient(100deg, #0b5cff 10%, #3fa9ff 90%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+			.search {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				width: 100%;
+				padding: 13px 18px;
+				border-radius: 999px;
+				background: #111214;
+				border: 1px solid #23252a;
+				transition:
+					border-color 120ms ease,
+					box-shadow 120ms ease;
+			}
+			.search:focus-within {
+				border-color: #3f6fd8;
+				box-shadow: 0 0 0 3px rgba(63, 111, 216, 0.18);
+			}
+			.search svg {
+				flex: 0 0 auto;
+				color: #8b929c;
+			}
+			.search input {
+				flex: 1;
+				min-width: 0;
+				border: 0;
+				background: transparent;
+				color: inherit;
+				font: inherit;
+				font-size: 0.95rem;
+				outline: none;
+			}
+			.search input::placeholder {
+				color: #6b727c;
+			}
+			.cards {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 12px;
+				width: 100%;
+			}
+			.card {
+				padding: 14px 16px;
+				border-radius: 12px;
+				background: #101113;
+				border: 1px solid #1f2125;
+			}
+			.card h2 {
+				margin: 0 0 4px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				color: #e7e9ee;
+			}
+			.card p {
+				margin: 0;
+				font-size: 0.78rem;
+				line-height: 1.5;
+				color: #9aa1ab;
 			}
 			.meta {
-				color: #9ca3af;
-				font-size: 0.78rem;
-				margin: 0 0 20px;
+				margin: 4px 0 0;
+				font-size: 0.74rem;
+				color: #6b727c;
+				text-align: center;
 			}
-			.section {
-				margin: 0 0 18px;
-			}
-			.label {
-				display: block;
-				margin-bottom: 6px;
-				color: #e5e7eb;
-				font-size: 1.1rem;
-				font-weight: 630;
-				letter-spacing: 0.01em;
-				text-transform: none;
-			}
-			p {
-				margin: 0;
-				color: #c7c7c7;
-				line-height: 1.62;
-				font-size: 0.94rem;
-				max-width: 70ch;
-			}
-			code {
-				font-family: "SF Mono", Menlo, Consolas, monospace;
-				color: #e5e7eb;
-				background: #181818;
-				border: 1px solid #2a2a2a;
-				padding: 1px 5px;
-			}
-			a {
-				color: inherit;
+			.meta a {
+				color: #8b929c;
 				text-decoration: none;
 			}
-			a:hover {
+			.meta a:hover {
+				color: #d7dae0;
 				text-decoration: underline;
+			}
+			code {
+				font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+				font-size: 0.92em;
+				color: #cfd3d9;
+			}
+			@media (max-width: 620px) {
+				.cards {
+					grid-template-columns: 1fr;
+				}
+				.wordmark {
+					font-size: 2rem;
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<main class="sheet">
-			<h1>Welcome to Scramjet!</h1>
+		<main class="page">
+			<div class="wordmark">Drift Proxy</div>
+
+			<form class="search" id="newtab-search">
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8" />
+					<path d="m21 21-4.3-4.3" />
+				</svg>
+				<input
+					id="newtab-input"
+					type="text"
+					placeholder="Search the web or enter an address"
+					autocomplete="off"
+					autocapitalize="off"
+					spellcheck="false"
+					autofocus
+				/>
+			</form>
+
+			<div class="cards">
+				<div class="card">
+					<h2>Browser</h2>
+					<p>
+						Load any site through the proxy and keep its cookies, storage and
+						navigation coherent.
+					</p>
+				</div>
+				<div class="card">
+					<h2>Requests</h2>
+					<p>
+						Watch every request the proxied page makes, and the headers Drift
+						Proxy rewrites.
+					</p>
+				</div>
+				<div class="card">
+					<h2>Playground</h2>
+					<p>
+						Serve your own HTML, CSS and JS from a fake origin and inspect the
+						rewritten output.
+					</p>
+				</div>
+			</div>
+
 			<p class="meta">
-				Version {{SCRAMJET_VERSION}} |
+				Version {{SCRAMJET_VERSION}} &middot;
 				<a
 					href="https://github.com/MercuryWorkshop/scramjet/commit/{{SCRAMJET_BUILD}}"
 					target="_blank"
-					>Build {{SCRAMJET_BUILD}}</a
+					rel="noreferrer"
+					>build {{SCRAMJET_BUILD}}</a
 				>
-				| Updated {{SCRAMJET_DATE_PRETTY}}
+				&middot; updated {{SCRAMJET_DATE_PRETTY}}
 			</p>
-
-			<section class="section">
-				<p>
-					<a href="https://github.com/MercuryWorkshop/scramjet" target="_blank"
-						><strong>Scramjet</strong></a
-					>
-					is an experimental <strong>interception-based web proxy</strong>,
-					designed to evade internet censorship and bypass arbitrary browser
-					restrictions.<br /><br />
-					Scramjet allows you to sandbox arbitrary web content, bypass CORS
-					restrictions on loading websites, and instrument and debug websites
-					inside the browser itself. This is accomplished through a combination
-					of interception, rewriting, and sandboxing techniques. You can learn
-					more about the technical details
-					<a
-						href="https://developer.puter.com/blog/how-I-ported-the-web-to-the-web/"
-						target="_blank"
-						><strong>here</strong></a
-					>.<br /><br />
-					If you're interested in contributing to scramjet, or want to build
-					your own web proxy or application using it, you should check out the
-					<a href="https://github.com/MercuryWorkshop/scramjet" target="_blank"
-						><strong>GitHub repository</strong></a
-					>.<br /><br />
-					This website is a demo of scramjet's capabilities, letting you browse
-					the web proxied through scramjet, inspect how scramjet rewrites
-					requests and responses, and see how scramjet handles your custom
-					content in the playground.
-				</p>
-			</section>
-
-			<section class="section">
-				<span class="label">Browser</span>
-				<p>
-					Try entering a URL in the box above to browse the web proxied through
-					scramjet.<br />
-					All traffic sent through scramjet is
-					<strong>fully end-to-end encrypted</strong> with TLS, powered by
-					<a href="https://github.com/ading2210/libcurl.js" target="_blank"
-						><strong>libcurl.js</strong></a
-					>
-					and the
-					<a
-						href="https://github.com/MercuryWorkshop/wisp-protocol"
-						target="_blank"
-						><strong>wisp protocol</strong></a
-					>.
-				</p>
-			</section>
-
-			<section class="section">
-				<span class="label">Requests</span>
-				<p>
-					You can inspect all the requests sent through scramjet, and what
-					transformations are applied in the requests tab.<br />
-					Note that requests will not be captured until you first click on the
-					requests tab.
-				</p>
-			</section>
-
-			<section class="section">
-				<span class="label">Playground</span>
-				<p>
-					The playground lets you write your own html/css/js snippets which will
-					be run inside the scramjet sandbox. Your files are "served" by
-					scramjet from a fake origin, which can be configured to be any URL.
-					Notice that if you add a <code>console.log(location.href)</code> in
-					your code, the page will really be running on the fake origin.
-				</p>
-			</section>
 		</main>
+		<script>
+			const form = document.getElementById("newtab-search");
+			const input = document.getElementById("newtab-input");
+
+			form.addEventListener("submit", (event) => {
+				event.preventDefault();
+				const raw = input.value.trim();
+				if (!raw) return;
+
+				const hasScheme = /^[a-z][a-z\d+\-.]*:\/\//i.test(raw);
+				const looksLikeHost = /^[\w-]+(\.[\w-]+)+(\/|$|:)/.test(raw);
+
+				if (hasScheme) {
+					location.href = raw;
+				} else if (looksLikeHost) {
+					location.href = "https://" + raw;
+				} else {
+					location.href =
+						"https://duckduckgo.com/?q=" + encodeURIComponent(raw);
+				}
+			});
+
+			input.focus();
+		</script>
 	</body>
 </html>

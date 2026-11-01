@@ -10,6 +10,7 @@ import {
 } from "driftproxy";
 import { cachePlugin, controller } from "..";
 import Monaco from "../components/Monaco";
+import { icon } from "../components/Lucide";
 
 const DEFAULT_ORIGIN = "https://fakeorigin.com";
 const DEFAULT_PREVIEW_URL = `${DEFAULT_ORIGIN}/`;
@@ -54,7 +55,8 @@ const DEFAULT_FILES: PlaygroundFile[] = [
 		path: "/style.css",
 		content: `:root {
   color-scheme: light dark;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  font-family: ui-sans-serif, "Inter",
+			system-ui, -apple-system, Segoe UI, sans-serif;
 }
 body {
   margin: 0;
@@ -585,9 +587,7 @@ const PlaygroundView: Component<
 																	}}
 																	title="Rename file"
 																>
-																	<span class="material-symbols-outlined">
-																		edit
-																	</span>
+																	{icon("pencil")}
 																</button>
 																<button
 																	type="button"
@@ -612,9 +612,7 @@ const PlaygroundView: Component<
 																	}}
 																	title="Delete file"
 																>
-																	<span class="material-symbols-outlined">
-																		delete
-																	</span>
+																	{icon("trash")}
 																</button>
 															</div>
 														</div>
@@ -661,7 +659,7 @@ const PlaygroundView: Component<
 													}}
 													title="Create project"
 												>
-													<span class="material-symbols-outlined">add</span>
+													{icon("plus")}
 												</button>
 											</div>
 											<div class="tree-list projects-list">
@@ -703,9 +701,7 @@ const PlaygroundView: Component<
 															}}
 															title="Rename project"
 														>
-															<span class="material-symbols-outlined">
-																edit
-															</span>
+															{icon("pencil")}
 														</button>
 														<button
 															type="button"
@@ -735,9 +731,7 @@ const PlaygroundView: Component<
 															}}
 															title="Delete project"
 														>
-															<span class="material-symbols-outlined">
-																delete
-															</span>
+															{icon("trash")}
 														</button>
 													</div>
 												))}
@@ -828,10 +822,10 @@ const PlaygroundView: Component<
 							<div class="omnibox-shell">
 								<div class="omnibox-nav" aria-hidden="true">
 									<button type="button" class="nav-btn">
-										<span class="material-symbols-outlined">arrow_back</span>
+										{icon("arrow-left")}
 									</button>
 									<button type="button" class="nav-btn">
-										<span class="material-symbols-outlined">arrow_forward</span>
+										{icon("arrow-right")}
 									</button>
 									<button
 										type="button"
@@ -840,7 +834,7 @@ const PlaygroundView: Component<
 											goPreview(this.frame, this.previewUrl);
 										}}
 									>
-										<span class="material-symbols-outlined">refresh</span>
+										{icon("rotate-cw")}
 									</button>
 								</div>
 								<input
@@ -886,7 +880,7 @@ const PlaygroundView: Component<
 								on:click={() => runRewrite(this.frame)}
 								title="Re-run rewrite"
 							>
-								<span class="material-symbols-outlined">refresh</span>
+								{icon("rotate-cw")}
 							</button>
 							<span class="rewrite-meta-status">
 								{use(this.rewriteStatus).map((s) => s)}
@@ -961,8 +955,6 @@ const PlaygroundView: Component<
 };
 
 PlaygroundView.style = css`
-	@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0");
-
 	:scope {
 		flex: 1;
 		min-width: 0;
@@ -970,6 +962,7 @@ PlaygroundView.style = css`
 		display: flex;
 		padding: 0;
 		font-family:
+			"Inter",
 			system-ui,
 			-apple-system,
 			"Segoe UI",
@@ -978,20 +971,6 @@ PlaygroundView.style = css`
 			Arial,
 			sans-serif;
 		color: #e5e5e5;
-	}
-	.material-symbols-outlined {
-		font-family: "Material Symbols Outlined";
-		font-weight: normal;
-		font-style: normal;
-		font-size: 16px;
-		line-height: 1;
-		letter-spacing: normal;
-		text-transform: none;
-		display: inline-block;
-		white-space: nowrap;
-		word-wrap: normal;
-		direction: ltr;
-		-webkit-font-smoothing: antialiased;
 	}
 	.playground-view {
 		display: flex;
@@ -1166,9 +1145,6 @@ PlaygroundView.style = css`
 		background: #1f1f1f;
 		color: #d0d0d0;
 	}
-	.project-header-action .material-symbols-outlined {
-		font-size: 14px;
-	}
 	.project-item-row {
 		display: flex;
 		align-items: center;
@@ -1235,9 +1211,6 @@ PlaygroundView.style = css`
 	}
 	.project-item-action.delete {
 		color: #c87b7b;
-	}
-	.project-item-action .material-symbols-outlined {
-		font-size: 14px;
 	}
 	.file-item {
 		flex: 1;
@@ -1317,9 +1290,6 @@ PlaygroundView.style = css`
 	}
 	.file-item-action.delete {
 		color: #c87b7b;
-	}
-	.file-item-action .material-symbols-outlined {
-		font-size: 14px;
 	}
 	.file-item-action:hover {
 		background: #2a2a2a;
@@ -1434,9 +1404,6 @@ PlaygroundView.style = css`
 		align-items: center;
 		justify-content: center;
 	}
-	.nav-btn .material-symbols-outlined {
-		font-size: 15px;
-	}
 	.nav-btn:hover {
 		background: #1f1f1f;
 		color: #d0d0d0;
@@ -1539,9 +1506,6 @@ PlaygroundView.style = css`
 	.rewrite-refresh:hover {
 		background: #1f1f1f;
 		color: #d0d0d0;
-	}
-	.rewrite-refresh .material-symbols-outlined {
-		font-size: 14px;
 	}
 	.preview-body {
 		flex: 1;
