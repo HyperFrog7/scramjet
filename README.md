@@ -69,6 +69,12 @@ pnpm --filter driftproxy test:package   # built bundle structure
 
 The `$scramjet$`-prefixed globals, `scramjet-` DOM attribute names and `scramjet.js` build artifact filenames are retained. They are an internal interface shared between the JavaScript client, the WebAssembly rewriter and integrators that override `config.globals`. Renaming them would be a breaking change for downstream proxies, so they keep their historical names. See [NOTICE](./NOTICE).
 
+## AI assistance
+
+Large parts of this fork - the Drift Proxy rebrand, the logo and demo assets, the demo UI, and the profiling work on the rewriting path - were produced with AI coding agents and then reviewed and adjusted by hand.
+
+That means the usual caveats apply with more force than on the upstream project: expect gaps, verify anything security-relevant yourself, and read the code before you deploy it or point untrusted traffic at it. Bug reports and corrections are welcome.
+
 ## License
 
 [AGPL-3.0-only](./LICENSE), inherited from the upstream project.
